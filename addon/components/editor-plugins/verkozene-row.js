@@ -8,7 +8,6 @@ export default Component.extend({
   store: service(),
   async didReceiveAttrs() {
     if (! isEmpty(this.verkozene) && ! isEmpty(this.bestuursorgaan)) {
-      debugger;
       const lijsten = await this.store.query('kandidatenlijst', {
         filter: {
           'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}},

@@ -72,8 +72,7 @@ export default Component.extend({
         this.renumberVerkozenen();
       }
     },
-    save(target) {
-      console.log(this);
+    save() {
       const html = this.get('element').getElementsByClassName('output')[0].innerHTML;
       this.save(html);
     },

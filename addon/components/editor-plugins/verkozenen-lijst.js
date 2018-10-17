@@ -8,7 +8,6 @@ import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
 export default Component.extend({
   layout,
   store: service(),
-  tagName: '',
   edit: false,
   didReceiveAttrs() {
     if (! isEmpty(this.bestuursorgaan)) {
@@ -73,6 +72,11 @@ export default Component.extend({
         this.renumberVerkozenen();
       }
     },
+    save(target) {
+      console.log(this);
+      const html = this.get('element').getElementsByClassName('output')[0].innerHTML;
+      this.save(html);
+    },
     remove(verkozene) {
       this.verkozenen.removeObject(verkozene);
       this.renumberVerkozenen();
@@ -80,6 +84,9 @@ export default Component.extend({
     edit(verkozene) {
       this.set('edit', true);
       this.set('currentVerkozene', verkozene);
+    },
+    closeEdit() {
+      this.set('edit', false);
     },
     removeOldMandaat(mandaat) {
       this.currentVerkozene.oudeMandaten.removeObject(mandaat);

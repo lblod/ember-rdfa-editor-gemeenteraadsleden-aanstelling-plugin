@@ -1,0 +1,10 @@
+{{#wu-button onClick=(action 'togglePopup')}}tabel beheren{{/wu-button}}
+
+{{#if popup}}
+  {{#wu-modal title="Gemeenteraadsleden" onClose=(action 'togglePopup') as |m|}}
+    {{#m.content}}
+      {{editor-plugins/verkozenen-lijst bestuursorgaan=bestuursorgaan save=(action 'insert')}}
+    {{/m.content}}
+  {{/wu-modal}}
+{{/if}}
+

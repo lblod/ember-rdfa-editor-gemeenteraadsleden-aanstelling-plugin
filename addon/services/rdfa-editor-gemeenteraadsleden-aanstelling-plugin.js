@@ -1,6 +1,6 @@
 import { getOwner } from '@ember/application';
 import Service from '@ember/service';
-import EmberObject, { computed } from '@ember/object';
+import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
 
 const textToMatch = "voeg rangorde tabel gemeenteraadsleden toe.";
@@ -35,24 +35,26 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
   execute: task(function * (hrId, contexts, hintsRegistry, editor) {
     if (contexts.length === 0) return [];
 
-    const hints = [];
     for (var context of contexts) {
       this.setBestuursorgaanIfSet(context.context);
       if (this.detectRelevantContext(context)) {
         const bestuursorgaan = this.bestuursorgaan;
         const index = context.text.toLowerCase().indexOf(textToMatch);
-        const location = this.normalizeLocation([index, textToMatch.length], context.region);
+        const location = this.normalizeLocation([index, index + textToMatch.length], context.region);
+        hintsRegistry.removeHintsInRegion(context.region, hrId, this.get('who'));
         hintsRegistry.addHints(hrId, this.get('who'), [this.generateCard(hrId, hintsRegistry, editor, { location, bestuursorgaan})]);
       }
     }
   }),
 
   setBestuursorgaanIfSet(triples) {
-    const zitting = triples.some((triple) => triple.object === 'http://data.vlaanderen.be/ns/besluit#Zitting');
+    const zitting = triples.find((triple) => triple.object === 'http://data.vlaanderen.be/ns/besluit#Zitting');
     if (zitting) {
-      const bestuursorgaan = triples.some((triple) => triple.subject === zitting && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#isGehoudenDoor');
-      if (bestuursorgaan)
-        this.set('bestuursorgaan', bestuursorgaan);
+      const bestuursorgaan = triples.find((triple) => triple.subject === zitting.subject && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#isGehoudenDoor');
+      if (bestuursorgaan) {
+        this.set('bestuursorgaan', bestuursorgaan.object);
+      }
+
     }
 
   },
@@ -107,8 +109,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     return EmberObject.create({
       info: {
         label: this.get('who'),
-        plainValue: hint.text,
-        htmlString: '<b>hello world</b>',
+        bestuursorgaan: hint.bestuursorgaan,
         location: hint.location,
         hrId, hintsRegistry, editor
       },

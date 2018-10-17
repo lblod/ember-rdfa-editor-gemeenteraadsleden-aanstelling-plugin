@@ -1,6 +1,5 @@
 {{#if edit}}
-  {{currentVerkozene.persoon.gebruikteVoornaam}}
-  {{currentVerkozene.persoon.achternaam}}
+  <h2 class="h4">Beheer vorige mandaten van  {{currentVerkozene.persoon.gebruikteVoornaam}}  {{currentVerkozene.persoon.achternaam}}</h2>
   <table>
     <thead>
       <tr>
@@ -12,59 +11,105 @@
     {{#each currentVerkozene.oudeMandaten as |mandaat|}}
       <tr>
         <td>
-          {{mandaat.start}}
+          {{wu-datepicker value=mandaat.start}}
         </td>
         <td>
-          {{maandaat.einde}}
+          {{wu-datepicker value=mandaat.einde}}
         </td>
         <td>
-          <button {{action 'removeOldMandaat' mandaat}}>remove</button>
+          {{#wu-button onClick=(action 'removeOldMandaat' mandaat)}}remove{{/wu-button}}
         </td>
       </tr>
     {{/each}}
     <tr>
-      <td colspan="3"><button {{action 'addOldMandaat' mandaat}}>add</button></td>
+      <td colspan="3">{{#wu-button onClick=(action 'addOldMandaat' mandaat)}}add{{/wu-button}}</td>
     </tr>
   </table>
-{{/if}}
-<table class="data-table data-table--lined data-table--zebra data-table--tight">
-  <thead>
-    <tr>
-      <td>Rang</td>
-      <td>Voornaam &amp; Familienaam</td>
-      <td>Begin mandaat</td>
-      <td>Einde mandaat</td>
-      <td>Stemmen</td>
-      <td>Lijst</td>
-    </tr>
-  </thead>
-  <tbody>
-    {{#each verkozenen as |verkozene|}}
-      {{#editor-plugins/verkozene-row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
+  {{#wu-button onClick=(action 'closeEdit')}}terug naar tabel{{/wu-button}}
+{{else}}
+    <table class="data-table data-table--lined data-table--zebra data-table--tight">
+      <thead>
         <tr>
-          <td>{{verkozene.rangorde}}</td>
-          <td>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</td>
-          <td>
-            {{#each verkozene.oudeMandaten as |mandaat|}}
-              {{mandaat.start}}
-            {{/each}}
-          </td>
-          <td>
-            {{#each verkozene.oudeMandaten as |mandaat|}}
-              {{mandaat.einde}}
-            {{/each}}
-          </td>
-          <td>{{row.resultaat.aantalNaamstemmen}}</td>
-          <td>{{row.lijst.lijstnaam}}</td>
-          <td>
-            <button {{action 'edit' verkozene}}>edit</button>
-            <button {{action 'remove' verkozene}}>remove</button>
-            <button {{action 'down' verkozene}}>down</button>
-            <button {{action 'up' verkozene}}>up</button>
-          </td>
+          <td>Rang</td>
+          <td>Voornaam &amp; Familienaam</td>
+          <td>Begin mandaat</td>
+          <td>Einde mandaat</td>
+          <td>Stemmen</td>
+          <td>Lijst</td>
         </tr>
-      {{/editor-plugins/verkozene-row}}
-    {{/each}}
-  </tbody>
-</table>
-{{yield}}
+      </thead>
+      <tbody>
+        {{#each verkozenen as |verkozene|}}
+          {{#editor-plugins/verkozene-row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
+            <tr>
+              <td>{{verkozene.rangorde}}</td>
+              <td>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</td>
+              <td>
+                {{#each verkozene.oudeMandaten as |mandaat|}}
+                  {{mandaat.start}}
+                {{/each}}
+              </td>
+              <td>
+                {{#each verkozene.oudeMandaten as |mandaat|}}
+                  {{mandaat.einde}}
+                {{/each}}
+              </td>
+              <td>{{row.resultaat.aantalNaamstemmen}}</td>
+              <td>{{row.lijst.lijstnaam}}</td>
+              <td>
+                {{#wu-button onClick=(action 'edit' verkozene)}}edit{{/wu-button}}
+                {{#wu-button onClick=(action 'remove' verkozene)}}remove{{/wu-button}}
+                {{#wu-button onClick=(action 'down' verkozene)}}down{{/wu-button}}
+                {{#wu-button onClick=(action 'up' verkozene)}}up{{/wu-button}}
+              </td>
+            </tr>
+          {{/editor-plugins/verkozene-row}}
+        {{else}}
+          <td colspan="4">Er werden geen effectief verkozenen gevonden</td>
+        {{/each}}
+      </tbody>
+    </table>
+    {{#wu-button onClick=(action 'save')}}opslaan{{/wu-button}}
+{{/if}}
+<div class="output" style="display:none">
+  <table class="data-table data-table--lined data-table--zebra data-table--tight">
+    <thead>
+      <tr>
+        <td>Rang</td>
+        <td>Voornaam &amp; Familienaam</td>
+        <td>Begin mandaat</td>
+        <td>Einde mandaat</td>
+        <td>Stemmen</td>
+        <td>Lijst</td>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each verkozenen as |verkozene|}}
+        {{#editor-plugins/verkozene-row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
+          <tr>
+            <td>
+              {{#with-rdfa-resource resource=verkozene as |ctx|}}
+                {{#ctx.prop p="rangorde"}}{{verkozene.rangorde}}{{/ctx.prop}}
+              {{/with-rdfa-resource}}
+            </td>
+            <td>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</td>
+            <td>
+              {{#each verkozene.oudeMandaten as |mandaat|}}
+                {{mandaat.start}}
+              {{/each}}
+            </td>
+            <td>
+              {{#each verkozene.oudeMandaten as |mandaat|}}
+                {{mandaat.einde}}
+              {{/each}}
+            </td>
+            <td>{{row.resultaat.aantalNaamstemmen}}</td>
+            <td>{{row.lijst.lijstnaam}}</td>
+            <td>
+            </td>
+          </tr>
+        {{/editor-plugins/verkozene-row}}
+      {{/each}}
+    </tbody>
+  </table>
+</div>

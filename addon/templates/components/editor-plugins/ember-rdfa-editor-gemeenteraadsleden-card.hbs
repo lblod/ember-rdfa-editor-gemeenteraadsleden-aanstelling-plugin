@@ -1,0 +1,7 @@
+<p class="u-spacer--tiny">{{info.label}} <br>
+  {{#wu-button action 'togglePopup'}}bewerk deze tabel{{/wu-button}}
+</p>
+
+{{#if popup}}
+  {{editor-plugins/verkozenen-lijst verkozenen=verkozenen save=(action 'insert')}}
+{{/if}}

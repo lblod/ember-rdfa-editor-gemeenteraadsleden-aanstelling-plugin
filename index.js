@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-rdfa-editor-gemeenteraadsleden-aanstelling-plugin'
+  name: '@lblod/ember-rdfa-editor-gemeenteraadsleden-aanstelling-plugin',
+  isDevelopingAddon(){ true}
 };

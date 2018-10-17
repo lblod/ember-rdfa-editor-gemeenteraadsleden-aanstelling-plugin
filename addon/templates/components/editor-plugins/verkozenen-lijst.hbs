@@ -1,0 +1,70 @@
+{{#if edit}}
+  {{currentVerkozene.persoon.gebruikteVoornaam}}
+  {{currentVerkozene.persoon.achternaam}}
+  <table>
+    <thead>
+      <tr>
+        <td>start</td>
+        <td>einde</td>
+        <td></td>
+      </tr>
+    </thead>
+    {{#each currentVerkozene.oudeMandaten as |mandaat|}}
+      <tr>
+        <td>
+          {{mandaat.start}}
+        </td>
+        <td>
+          {{maandaat.einde}}
+        </td>
+        <td>
+          <button {{action 'removeOldMandaat' mandaat}}>remove</button>
+        </td>
+      </tr>
+    {{/each}}
+    <tr>
+      <td colspan="3"><button {{action 'addOldMandaat' mandaat}}>add</button></td>
+    </tr>
+  </table>
+{{/if}}
+<table class="data-table data-table--lined data-table--zebra data-table--tight">
+  <thead>
+    <tr>
+      <td>Rang</td>
+      <td>Voornaam &amp; Familienaam</td>
+      <td>Begin mandaat</td>
+      <td>Einde mandaat</td>
+      <td>Stemmen</td>
+      <td>Lijst</td>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each verkozenen as |verkozene|}}
+      {{#editor-plugins/verkozene-row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
+        <tr>
+          <td>{{verkozene.rangorde}}</td>
+          <td>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</td>
+          <td>
+            {{#each verkozene.oudeMandaten as |mandaat|}}
+              {{mandaat.start}}
+            {{/each}}
+          </td>
+          <td>
+            {{#each verkozene.oudeMandaten as |mandaat|}}
+              {{mandaat.einde}}
+            {{/each}}
+          </td>
+          <td>{{row.resultaat.aantalNaamstemmen}}</td>
+          <td>{{row.lijst.lijstnaam}}</td>
+          <td>
+            <button {{action 'edit' verkozene}}>edit</button>
+            <button {{action 'remove' verkozene}}>remove</button>
+            <button {{action 'down' verkozene}}>down</button>
+            <button {{action 'up' verkozene}}>up</button>
+          </td>
+        </tr>
+      {{/editor-plugins/verkozene-row}}
+    {{/each}}
+  </tbody>
+</table>
+{{yield}}

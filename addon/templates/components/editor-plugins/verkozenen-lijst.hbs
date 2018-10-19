@@ -88,7 +88,9 @@
         {{#editor-plugins/verkozene-row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
           <tr>
             <td>
-              {{verkozene.rangorde}}
+              {{#with-rdfa-resource resource=verkozene as |ctx|}}
+                {{#ctx.prop p="rangorde"}}{{verkozene.rangorde}}{{/ctx.prop}}
+              {{/with-rdfa-resource}}
             </td>
             <td>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</td>
             <td>

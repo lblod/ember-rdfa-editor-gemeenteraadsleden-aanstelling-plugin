@@ -20,11 +20,17 @@
 			onClick=(action 'togglePopup')
 		}}
 		{{wu-button
-			label="Annuleer"
+			label="Annuleer (todo)"
 			class="button--alt"
 			isNarrow=true
 			onClick=null
 		}}
+	  {{wu-button
+	    label="Negeer suggestie (todo)"
+	    class="button--link button--link--dark"
+	    size="small"
+	    isNarrow=true
+	    onClick=null}}
   {{/wu-button-group}}
 </div>
 
@@ -35,8 +41,8 @@
     {{/m.content}}
     <div class="modal-dialog__footer">
   		{{#wu-button-group}}
-		    <button class="button button--narrow">Bewaar</button>
-		    <button class="button button--alt button--narrow">Verwerp wijzigingen</button>
+		    <button class="button button--narrow">Bewaar (todo, acties onderaan in content)</button>
+		    <button class="button button--alt button--narrow">Verwerp wijzigingen (todo)</button>
 		  {{/wu-button-group}}
 	  </div>
   {{/wu-modal}}

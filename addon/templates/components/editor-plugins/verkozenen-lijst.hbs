@@ -27,7 +27,7 @@
             {{wu-datepicker value=mandaat.einde}}
           </td>
           <td>
-            {{#wu-button class="button--alt button--small" onClick=(action 'removeOldMandaat' mandaat)}}<i class="vi vi-cross"></i> Verwijder mandaat{{/wu-button}}
+            {{#wu-button class="button--alt button--small button--narrow" onClick=(action 'removeOldMandaat' mandaat)}}<i class="vi vi-cross"></i> Verwijder mandaat{{/wu-button}}
           </td>
         </tr>
       {{else}}
@@ -45,7 +45,8 @@
     </tbody>
   </table>
   <br>
-  {{#wu-button onClick=(action 'closeEdit')}}Bewaar wijzigingen {{/wu-button}} (moet in footer)
+  {{#wu-button class="button--narrow" onClick=(action 'closeEdit')}}Bewaar wijzigingen{{/wu-button}}
+  {{#wu-button class="button--alt button--narrow" onClick=(action 'closeEdit')}}Verwerp wijzigingen (todo) {{/wu-button}}
 
 {{else}}
     <table class="data-table data-table--lined data-table--zebra data-table--tight">
@@ -124,7 +125,7 @@
         {{/each}}
       </tbody>
     </table>
-    {{#wu-button onClick=(action 'save')}}opslaan{{/wu-button}}
+    {{#wu-button class="button--narrow" onClick=(action 'save')}}Bewaar wijzigingen{{/wu-button}}
 {{/if}}
 <div class="output" style="display:none">
   <table class="data-table data-table--lined data-table--zebra data-table--tight">
@@ -136,7 +137,6 @@
         <th>Einde mandaat</th>
         <th>Stemmen</th>
         <th>Lijst</th>
-        <th>Acties</th>
       </tr>
     </thead>
     <tbody>
@@ -159,8 +159,6 @@
             </td>
             <td>{{row.resultaat.aantalNaamstemmen}}</td>
             <td>{{row.lijst.lijstnaam}}</td>
-            <td>
-            </td>
           </tr>
         {{/editor-plugins/verkozene-row}}
       {{/each}}

@@ -144,9 +144,17 @@
         {{#editor-plugins/verkozene-row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
           <tr>
             <td>
-              {{verkozene.rangorde}}
+              {{#with-rdfa-resource resource=verkozene as |ctx|}}
+                {{ctx.prop p="rangorde"}}
+              {{/with-rdfa-resource}}
             </td>
-            <td>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</td>
+            <td>
+              {{#with-rdfa-resource resource=verkozene as |ctx|}}
+                {{#ctx.linked-resource p="persoon" as |model persoon|}}
+                  {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
+                {{/ctx.linked-resource}}
+              {{/with-rdfa-resource}}
+            </td>
             <td>
               {{#each verkozene.oudeMandaten as |mandaat|}}
                 {{mandaat.start}}
@@ -157,8 +165,25 @@
                 {{mandaat.einde}}
               {{/each}}
             </td>
-            <td>{{row.resultaat.aantalNaamstemmen}}</td>
-            <td>{{row.lijst.lijstnaam}}</td>
+            <td>
+              {{#if row.resultaat}}
+                {{#with-rdfa-resource resource=verkozene as |ctx|}}
+                  {{#ctx.linked-resource p="persoon" as |model persoon|}}
+                    {{#ctx.linked-resource resource=persoon p="verkiezingsresultaten" as |model resultaat|}}
+                      {{resultaat.prop resource=row.resultaat p="aantalNaamstemmen"}}
+                    {{/ctx.linked-resource}}
+                  {{/ctx.linked-resource}}
+                {{/with-rdfa-resource}}
+              {{/if}}
+             </td>
+             <td>
+               {{#if row.lijst}}
+                 {{#with-rdfa-resource vocab="https://data.vlaanderen.be/ns/mandaat#" resource=row.lijst as |ctx|}}
+                   {{ctx.prop p="lijstnaam"}}
+                   <span property="heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                 {{/with-rdfa-resource}}
+               {{/if}}
+             </td>
           </tr>
         {{/editor-plugins/verkozene-row}}
       {{/each}}

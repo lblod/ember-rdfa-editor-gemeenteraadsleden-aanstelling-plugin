@@ -4,6 +4,9 @@
 		  <p class="u-spacer--tiny">
 		    Wil u graag een tabel invoegen of beheren voor de <strong>rangorde van de gemeenteraadsleden</strong>?
 		  </p>
+      {{#unless bestuursorgaan}}
+        <p>Gelieve eerst een bestuursorgaan te selecteren.</p>
+      {{/unless}}
     </div>
     <div class="col--2-12 u-align-right">
       <a class="link--icon--close" href="#"> {{!-- TODO: action close {{action "remove" result.origModel}} --}}
@@ -14,11 +17,21 @@
 </div>
 <div class="modal-dialog__footer">
   {{#wu-button-group}}
-		{{wu-button
-			label="Ga naar tabel"
-			isNarrow=true
-			onClick=(action 'togglePopup')
-		}}
+    {{#if bestuursorgaan}}
+      {{#if info.node}}
+		    {{wu-button
+			    label="Bewerk tabel"
+			    isNarrow=true
+			    onClick=(action 'togglePopup')
+		    }}
+      {{else}}
+		    {{wu-button
+			    label="Ga naar tabel"
+			    isNarrow=true
+			    onClick=(action 'togglePopup')
+		    }}
+        {{/if}}
+    {{/if}}
 		{{wu-button
 			label="Annuleer (todo)"
 			class="button--alt"
@@ -37,14 +50,13 @@
 {{#if popup}}
   {{#wu-modal title="Pas rangorde gemeenteraadsleden aan" dialog-class="modal-dialog--wide modal-dialog--sectioned" dialog-content-class="modal-dialog__content--sectioned" onClose=(action 'togglePopup') as |m|}}
     {{#m.content isSectioned=true}}
-      {{editor-plugins/verkozenen-lijst bestuursorgaan=bestuursorgaan save=(action 'insert')}}
+      {{editor-plugins/verkozenen-lijst bestuursorgaan=bestuursorgaan receiveNode=(action 'receiveNode')}}
     {{/m.content}}
     <div class="modal-dialog__footer">
   		{{#wu-button-group}}
-		    <button class="button button--narrow">Bewaar (todo, acties onderaan in content)</button>
-		    <button class="button button--alt button--narrow">Verwerp wijzigingen (todo)</button>
+        {{wu-button label="Bewaar" class="button button--narrow" onClick=(action 'insert' outputNode.innerHTML)}}
+        {{wu-button label="Verwerp wijzigingen" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
 		  {{/wu-button-group}}
 	  </div>
   {{/wu-modal}}
 {{/if}}
-

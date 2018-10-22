@@ -45,18 +45,24 @@ export default Component.extend({
    * @private
   */
   hintsRegistry: reads('info.hintsRegistry'),
-  //  bestuursorgaan: reads('orgaan.bestuursorgaan'),
-  bestuursorgaan: 'http://data.lblod.info/id/bestuursorganen/011d88d368cb43bb315cda320d404028647a197c379e2de4d386970657d9eb46', // todo remove hardcoded orgaan
+  bestuursorgaan: reads('orgaan.bestuursorgaan'),
   actions: {
     insert(html){
-      let mappedLocation = this.get('hintsRegistry').updateLocationToCurrentIndex(this.get('hrId'), this.get('location'));
-      this.get('hintsRegistry').removeHintsAtLocation(this.get('location'), this.get('hrId'), 'editor-plugins/ember-rdfa-editor-gemeenteraadsleden-card');
-      console.log(mappedLocation);
-      console.log(html);
-      this.get('editor').replaceTextWithHTML(...mappedLocation, html);
+      if (this.info.node) {
+
+      }
+      else {
+        let mappedLocation = this.get('hintsRegistry').updateLocationToCurrentIndex(this.get('hrId'), this.get('location'));
+        console.log(mappedLocation);
+        this.get('hintsRegistry').removeHintsAtLocation(this.get('location'), this.get('hrId'), this.info.who);
+        this.get('editor').replaceTextWithHTML(...mappedLocation, html);
+      }
     },
     togglePopup() {
       this.toggleProperty('popup');
+    },
+    receiveNode(node) {
+      this.set('outputNode', node);
     }
   }
 });

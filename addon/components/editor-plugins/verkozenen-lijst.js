@@ -3,12 +3,16 @@ import layout from '../../templates/components/editor-plugins/verkozenen-lijst';
 import { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
+import { warn } from '@ember/debug';
 import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
 
 export default Component.extend({
   layout,
   store: service(),
   edit: false,
+  didInsertElement(){
+    this.receiveNode(this.get('element').getElementsByClassName('output')[0]);
+  },
   didReceiveAttrs() {
     if (! isEmpty(this.bestuursorgaan)) {
       this.buildAanTeStellenMandatarissen();
@@ -46,7 +50,7 @@ export default Component.extend({
       this.set('verkozenen', aantestellen);
     }
     catch(e){
-      console.log(e);
+      warn(e, 'gemeenteraadsleden-aanstelling-plugin.queryFailed');
     }
   },
   renumberVerkozenen() {
@@ -71,10 +75,6 @@ export default Component.extend({
         this.verkozenen.insertAt(index + 1, verkozene);
         this.renumberVerkozenen();
       }
-    },
-    save() {
-      const html = this.get('element').getElementsByClassName('output')[0].innerHTML;
-      this.save(html);
     },
     remove(verkozene) {
       this.verkozenen.removeObject(verkozene);

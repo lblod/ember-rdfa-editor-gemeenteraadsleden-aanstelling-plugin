@@ -2,7 +2,6 @@ import { getOwner } from '@ember/application';
 import Service from '@ember/service';
 import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
-
 const textToMatch = "voeg rangorde tabel gemeenteraadsleden toe.";
 
 /**
@@ -37,13 +36,20 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
 
     for (var context of contexts) {
       this.setBestuursorgaanIfSet(context.context);
-      if (this.detectRelevantContext(context)) {
-        const bestuursorgaan = this.bestuursorgaan;
+      if (this.detectInsertTableContext(context)) {
         const index = context.text.toLowerCase().indexOf(textToMatch);
         const location = this.normalizeLocation([index, index + textToMatch.length], context.region);
-        hintsRegistry.removeHintsInRegion(context.region, hrId, this.get('who'));
-        hintsRegistry.addHints(hrId, this.get('who'), [this.generateCard(hrId, hintsRegistry, editor, { location, bestuursorgaan})]);
+        hintsRegistry.removeHintsInRegion(context.region, hrId, this.who);
+        hintsRegistry.addHints(hrId, this.who, [this.generateCard(hrId, hintsRegistry, editor, { location })]);
       }
+    }
+    const tables = this.extractTables(contexts);
+    for (const table of tables) {
+      const richNode = editor.getRichNodeFor(table);
+      const location = [ richNode.start, richNode.end ];
+      hintsRegistry.removeHintsInRegion(location, hrId, this.who);
+      const card = this.generateCard(hrId, hintsRegistry, editor, { location, node: table, noHighlight: true});
+      hintsRegistry.addHints(hrId, this.who, [ card ]);
     }
   }),
 
@@ -54,14 +60,13 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
       if (bestuursorgaan) {
         this.set('bestuursorgaan', bestuursorgaan.object);
       }
-
     }
-
   },
+
   /**
    * Given context object, tries to detect a context the plugin can work on
    *
-   * @method detectRelevantContext
+   * @method detectInsertTableContext
    *
    * @param {Object} context Text snippet at a specific location with an RDFa context
    *
@@ -69,11 +74,34 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
    *
    * @private
    */
-  detectRelevantContext(context){
+  detectInsertTableContext(context){
     return context.text.toLowerCase().indexOf(textToMatch) >= 0;
   },
 
-
+  /**
+   * @private
+   */
+  extractTables(contexts) {
+    const relevantContexts = contexts.filter((context) => context.context.find((triple) => triple.predicate === 'http://mu.semte.ch/vocabularies/ext/mandatarisTabelInput'));
+    const findFirstTextElement = function(node) {
+      if (node instanceof Array)
+        return findFirstTextElement(node[0]);
+      else
+        return node;
+    };
+    const parentTableOf = function (node) {
+      if ( ! node.tagName || node.tagName.toLowerCase() !== "table")
+        return parentTableOf(node.parentNode);
+      else
+        return node;
+    };
+    const relevantNodes = relevantContexts.map((context) => {
+      const textNode = findFirstTextElement(context.richNode);
+      const table = parentTableOf(textNode.domNode);
+      return table;
+    });
+    return new Set(relevantNodes);
+  },
 
   /**
    * Maps location of substring back within reference location
@@ -108,11 +136,13 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
   generateCard(hrId, hintsRegistry, editor, hint){
     return EmberObject.create({
       info: {
-        label: this.get('who'),
+        who: this.get('who'),
         bestuursorgaan: hint.bestuursorgaan,
         location: hint.location,
-        hrId, hintsRegistry, editor
+        hrId, hintsRegistry, editor,
+        node: hint.node
       },
+      options: { noHighlight: hint.noHighlight },
       location: hint.location,
       card: this.get('who')
     });

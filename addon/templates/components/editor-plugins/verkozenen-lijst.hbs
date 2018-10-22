@@ -125,10 +125,9 @@
         {{/each}}
       </tbody>
     </table>
-    {{#wu-button class="button--narrow" onClick=(action 'save')}}Bewaar wijzigingen{{/wu-button}}
 {{/if}}
 <div class="output" style="display:none">
-  <table class="data-table data-table--lined data-table--zebra data-table--tight">
+  <table class="data-table data-table--lined data-table--zebra data-table--tight" property="ext:mandatarisTabelInput">
     <thead>
       <tr>
         <th>Rang</th>
@@ -178,9 +177,9 @@
              </td>
              <td>
                {{#if row.lijst}}
-                 {{#with-rdfa-resource vocab="https://data.vlaanderen.be/ns/mandaat#" resource=row.lijst as |ctx|}}
+                 {{#with-rdfa-resource resource=row.lijst as |ctx|}}
                    {{ctx.prop p="lijstnaam"}}
-                   <span property="heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                   <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
                  {{/with-rdfa-resource}}
                {{/if}}
              </td>

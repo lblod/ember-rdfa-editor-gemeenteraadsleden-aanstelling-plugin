@@ -26,11 +26,11 @@ export default Component.extend({
         filter: {
           'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
           'verkiezingsresultaten': {
-//            'gevolg': { label: 'Effectief'}, TODO: filter on correct URI when codelist exists
-//            'is-resultaat-voor': {'stelt-samen': {':uri:': this.bestuursorgaan}} TODO: add this filter when data exists
+              'gevolg': { ':uri:': 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f'},
+              'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
           }
         },
-        // TODO sort on verkiezingsresultaat.plaatsRangorde
+        include: 'verkiezingsresultaten,is-kandidaat-voor',
         page: {
           number: 0,
           size: 100
@@ -38,14 +38,17 @@ export default Component.extend({
       });
       const aantestellen = A();
       var orde = 1;
-      verkozenen.forEach( (verkozene) =>  {
+
+      verkozenen.sortBy('verkiezingsresultaten.firstObject.aantalNaamstemmen').reverse().forEach( (verkozene) =>  {
         aantestellen.pushObject(AanTeStellenMandataris.create({
           persoon: verkozene,
           rangorde: orde++,
           start: this.bestuursorgaan.bindingStart,
           einde: this.bestuursorgaan.bindingEinde,
           status: this.defaultStatus,
-          mandaat: this.defaultMandaat
+          mandaat: this.defaultMandaat,
+          resultaat: verkozene.verkiezingsresultaten.firstObject,
+          lijst: verkozene.isKandidaatVoor.firstObject
         }));
       });
       this.set('verkozenen', aantestellen);

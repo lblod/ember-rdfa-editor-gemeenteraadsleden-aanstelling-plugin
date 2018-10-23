@@ -16,7 +16,8 @@ export default EmberObject.extend({
     start: "http://data.vlaanderen.be/ns/mandaat#start",
     einde: "http://data.vlaanderen.be/ns/mandaat#einde",
     mandaat: "http://www.w3.org/ns/org#holds",
-    persoon: "http://data.vlaanderen.be/ns/mandaat#isBestuurlijkeAliasVan"
+    persoon: "http://data.vlaanderen.be/ns/mandaat#isBestuurlijkeAliasVan",
+    oudeMandaten: "http://mu.semte.ch/vocabularies/ext/oudMandaat"
   },
   init() {
     this._super(...arguments);

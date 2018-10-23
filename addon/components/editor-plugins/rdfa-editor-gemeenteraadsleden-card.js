@@ -7,6 +7,8 @@ import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
 import RdfaContextScanner from '@lblod/ember-rdfa-editor/utils/rdfa-context-scanner';
 import layout from '../../templates/components/editor-plugins/rdfa-editor-gemeenteraadsleden-card';
 import { task } from 'ember-concurrency';
+
+const oudMandaatPredicate = 'http://mu.semte.ch/vocabularies/ext/oudMandaat';
 /**
 * Card displaying a hint of the Date plugin
 *
@@ -73,11 +75,18 @@ export default Component.extend({
       const resources = triples.filter((t) => t.predicate === "a");
       const mandatarissen = A();
       for (let resource of resources) {
-        if (resource.object === 'http://data.vlaanderen.be/ns/mandaat#Mandataris') {
-          if (! mandatarissen.some( (m) => m.uri === resource.subject)) {
-            const mandataris = yield this.buildMandatarisFromTriples(triples.filter((t) => t.subject === resource.subject));
-            mandatarissen.pushObject(mandataris);
+        if (
+          resource.object === 'http://data.vlaanderen.be/ns/mandaat#Mandataris' &&
+            ! mandatarissen.some( (m) => m.uri === resource.subject) &&
+            ! triples.some((t) => t.predicate === oudMandaatPredicate && t.object === resource.subject)
+        ) {
+          const mandataris = yield this.buildMandatarisFromTriples(triples.filter((t) => t.subject === resource.subject));
+          const oudeMandatenURIs = triples.filter((t) => t.predicate === oudMandaatPredicate && t.subject === resource.subject).map((t) => t.object);
+          for (const uri of new Set(oudeMandatenURIs)) {
+            const oudMandaat = yield this.buildMandatarisFromTriples(triples.filter((t) => t.subject === uri));
+            mandataris.oudeMandaten.pushObject(oudMandaat);
           }
+          mandatarissen.pushObject(mandataris);
         }
       }
       this.set('mandatarissen', mandatarissen);
@@ -89,7 +98,7 @@ export default Component.extend({
     function setPropIfTripleFound(triples, obj, prop) {
       const triple = triples.find((t) => t.predicate === obj.rdfaBindings[prop]);
       if (triple) {
-        obj.set(prop, triple.object);
+        obj.set(prop, triple.object.trim());
       }
     }
     const mandataris = AanTeStellenMandataris.create({ uri: triples[0].subject});
@@ -103,8 +112,21 @@ export default Component.extend({
     }
     const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
     if (persoonURI) {
-      const persoon = await this.store.query('persoon', {filter: {':uri:': persoonURI.object}});
+      const persoon = await this.store.query('persoon',
+                                             {
+                                               filter: {
+                                                 ':uri:': persoonURI.object,
+                                                 'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
+                                                 'verkiezingsresultaten': {
+                                                   'gevolg': { ':uri:': 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f'},
+                                                   'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
+                                                 }
+                                               },
+                                               include: 'verkiezingsresultaten,is-kandidaat-voor'
+                                             });
       mandataris.set('persoon', persoon.get('firstObject'));
+      mandataris.set('resultaat', mandataris.persoon.verkiezingsresultaten.firstObject);
+      mandataris.set('lijst', mandataris.persoon.isKandidaatVoor.firstObject);
     }
     return mandataris;
   },
@@ -123,9 +145,6 @@ export default Component.extend({
     },
     togglePopup() {
       this.toggleProperty('popup');
-    },
-    receiveNode(node) {
-      this.set('outputNode', node);
     }
   }
 });

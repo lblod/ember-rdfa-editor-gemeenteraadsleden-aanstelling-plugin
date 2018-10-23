@@ -23,7 +23,6 @@
   </thead>
   <tbody>
     {{#each verkozenen as |verkozene|}}
-      {{#mandataris-aanstelling-tabel/row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
         <tr>
           <td>
             <strong>{{verkozene.rangorde}}</strong>
@@ -42,12 +41,12 @@
                   <tr>
                     <td>
                       {{#each verkozene.oudeMandaten as |mandaat|}}
-                        {{mandaat.start}}
+                        {{moment-format mandaat.start 'YYYY-MM-DD'}}
                       {{/each}}
                     </td>
                     <td>
                       {{#each verkozene.oudeMandaten as |mandaat|}}
-                        {{mandaat.einde}}
+                        {{moment-format mandaat.einde 'YYYY-MM-DD'}}
                       {{/each}}
                     </td>
                   </tr>
@@ -55,8 +54,8 @@
               </tbody>
             </table>
           </td>
-          <td>{{row.resultaat.aantalNaamstemmen}}</td>
-          <td>{{row.lijst.lijstnaam}}</td>
+          <td>{{verkozene.resultaat.aantalNaamstemmen}}</td>
+          <td>{{verkozene.lijst.lijstnaam}}</td>
           <td>
             {{#wu-button-group class="u-spacer--tiny"}}
               {{#wu-button size="small" isNarrow=true label="Bewerk" onClick=(action 'edit' verkozene)}}
@@ -68,7 +67,6 @@
             {{/wu-button-group}}
           </td>
         </tr>
-      {{/mandataris-aanstelling-tabel/row}}
     {{else}}
       <td colspan="4">Er werden geen effectief verkozenen gevonden</td>
     {{/each}}

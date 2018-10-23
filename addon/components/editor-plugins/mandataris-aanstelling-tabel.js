@@ -1,5 +1,6 @@
 import Component from '@ember/component';
-import layout from '../../templates/components/editor-plugins/verkozenen-lijst';
+import layout from '../../templates/components/editor-plugins/mandataris-aanstelling-tabel';
+import { bool } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 import { A } from '@ember/array';
@@ -8,18 +9,18 @@ import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
 
 export default Component.extend({
   layout,
+  isEditing: bool('record'),
   store: service(),
-  edit: false,
-  didInsertElement(){
-    this.receiveNode(this.get('element').getElementsByClassName('output')[0]);
-  },
   didReceiveAttrs() {
-    if (! isEmpty(this.bestuursorgaan)) {
+    this.set('record', null);
+    if (isEmpty(this.mandatarissen)) {
       this.buildAanTeStellenMandatarissen();
+    }
+    else {
+      this.set('verkozenen', this.mandatarissen);
     }
   },
   async buildAanTeStellenMandatarissen() {
-
     try {
       const verkozenen = await this.store.query('persoon', {
         filter: {
@@ -80,18 +81,8 @@ export default Component.extend({
       this.verkozenen.removeObject(verkozene);
       this.renumberVerkozenen();
     },
-    edit(verkozene) {
-      this.set('edit', true);
-      this.set('currentVerkozene', verkozene);
-    },
-    closeEdit() {
-      this.set('edit', false);
-    },
-    removeOldMandaat(mandaat) {
-      this.currentVerkozene.oudeMandaten.removeObject(mandaat);
-    },
-    addOldMandaat(){
-      this.currentVerkozene.oudeMandaten.pushObject(AanTeStellenMandataris.create({ einde: 'tot heden'}));
+    setRecord(verkozene) {
+      this.set('record', verkozene);
     }
   }
 });

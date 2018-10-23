@@ -1,6 +1,6 @@
 import { A } from '@ember/array';
 import EmberObject from '@ember/object';
-
+import uuid from 'uuid/v4';
 export default EmberObject.extend({
   uri: null,
   rangorde: 0,
@@ -21,6 +21,7 @@ export default EmberObject.extend({
   init() {
     this._super(...arguments);
     this.set('oudeMandaten', A());
-    this.set('uri', 'http://temp/');
+    if (! this.uri)
+      this.set('uri', `http://data.lblod.info/id/mandaten/${uuid()}`);
   }
 });

@@ -1,8 +1,12 @@
 import { reads } from '@ember/object/computed';
+import { computed } from '@ember/object';
 import Component from '@ember/component';
-import layout from '../../templates/components/editor-plugins/rdfa-editor-gemeenteraadsleden-card';
 import { inject as service } from '@ember/service';
-
+import { A } from '@ember/array';
+import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
+import RdfaContextScanner from '@lblod/ember-rdfa-editor/utils/rdfa-context-scanner';
+import layout from '../../templates/components/editor-plugins/rdfa-editor-gemeenteraadsleden-card';
+import { task } from 'ember-concurrency';
 /**
 * Card displaying a hint of the Date plugin
 *
@@ -46,15 +50,74 @@ export default Component.extend({
   */
   hintsRegistry: reads('info.hintsRegistry'),
   bestuursorgaan: reads('orgaan.bestuursorgaan'),
-  actions: {
-    insert(html){
-      if (this.info.node) {
+  bestuursfunctie: reads('info.bestuursfunctie'),
 
+  outputId: computed('id', function() { return `output-mandataris-tabel-${this.id}`;}),
+  async didReceiveAttrs() {
+    this.fetchResources.perform();
+  },
+  fetchResources: task( function * () {
+    if (this.bestuursorgaan && this.bestuursfunctie) {
+      const mandaten = yield this.store.query('mandaat', {
+        filter: {
+          'bevat-in': {':id:': this.bestuursorgaan.id },
+          'bestuursfunctie': { ':uri:': this.bestuursfunctie }
+        }
+      });
+      this.set('mandaat', mandaten.get('firstObject'));
+    }
+    if (this.info.node) {
+      const contextScanner = RdfaContextScanner.create({});
+      const contexts = contextScanner.analyse(this.info.node).map((c) => c.context);
+      const triples = Array.concat(...contexts);
+      const resources = triples.filter((t) => t.predicate === "a");
+      const mandatarissen = A();
+      for (let resource of resources) {
+        if (resource.object === 'http://data.vlaanderen.be/ns/mandaat#Mandataris') {
+          if (! mandatarissen.some( (m) => m.uri === resource.subject)) {
+            const mandataris = yield this.buildMandatarisFromTriples(triples.filter((t) => t.subject === resource.subject));
+            mandatarissen.pushObject(mandataris);
+          }
+        }
+      }
+      this.set('mandatarissen', mandatarissen);
+    }
+    else
+      this.set('mandatarissen', null);
+  }),
+  async buildMandatarisFromTriples(triples) {
+    function setPropIfTripleFound(triples, obj, prop) {
+      const triple = triples.find((t) => t.predicate === obj.rdfaBindings[prop]);
+      if (triple) {
+        obj.set(prop, triple.object);
+      }
+    }
+    const mandataris = AanTeStellenMandataris.create({ uri: triples[0].subject});
+    setPropIfTripleFound(triples, mandataris, 'rangorde');
+    setPropIfTripleFound(triples, mandataris, 'start');
+    setPropIfTripleFound(triples, mandataris, 'einde');
+    const mandaatURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.mandaat);
+    if (mandaatURI) {
+      const mandaat = await this.store.query('mandaat', { filter:{':uri:': mandaatURI.object}});
+      mandataris.set('mandaat', mandaat.get('firstObject'));
+    }
+    const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
+    if (persoonURI) {
+      const persoon = await this.store.query('persoon', {filter: {':uri:': persoonURI.object}});
+      mandataris.set('persoon', persoon.get('firstObject'));
+    }
+    return mandataris;
+  },
+  actions: {
+    insert(){
+      const html = document.getElementById(this.outputId).innerHTML;
+      if (this.info.node) {
+        this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
+        this.get('editor').replaceNodeWithHTML(this.info.node, html);
       }
       else {
-        let mappedLocation = this.get('hintsRegistry').updateLocationToCurrentIndex(this.get('hrId'), this.get('location'));
-        console.log(mappedLocation);
-        this.get('hintsRegistry').removeHintsAtLocation(this.get('location'), this.get('hrId'), this.info.who);
+        let mappedLocation = this.hintsRegistry.updateLocationToCurrentIndex(this.hrId, this.location);
+        this.hintsRegistry.removeHintsAtLocation(this.location, this.hrId, this.info.who);
         this.get('editor').replaceTextWithHTML(...mappedLocation, html);
       }
     },

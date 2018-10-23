@@ -1,0 +1,14 @@
+{{yield
+  (hash
+    overview=(component 'mandataris-aanstelling-tabel/overview'
+                         verkozenen=verkozenen
+                         bestuursorgaan=bestuursorgaan
+                         edit=(action 'setRecord')
+                         up=(action 'up')
+                         down=(action 'down')
+                         remove=(action 'remove')
+  )
+  output=(component 'mandataris-aanstelling-tabel/output' verkozenen=verkozenen bestuursorgaan=bestuursorgaan)
+  editRecord=(component 'mandataris-aanstelling-tabel/edit-record' record=record)
+  isEditing=isEditing)
+}}

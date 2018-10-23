@@ -3,22 +3,22 @@ import { setupRenderingTest } from 'ember-qunit';
 import { render } from '@ember/test-helpers';
 import hbs from 'htmlbars-inline-precompile';
 
-module('Integration | Component | editor-plugins/verkozenen-lijst', function(hooks) {
+module('Integration | Component | mandataris-aanstelling-tabel/output', function(hooks) {
   setupRenderingTest(hooks);
 
   test('it renders', async function(assert) {
     // Set any properties with this.set('myProperty', 'value');
     // Handle any actions with this.set('myAction', function(val) { ... });
 
-    await render(hbs`{{editor-plugins/verkozenen-lijst}}`);
+    await render(hbs`{{mandataris-aanstelling-tabel/output}}`);
 
     assert.equal(this.element.textContent.trim(), '');
 
     // Template block usage:
     await render(hbs`
-      {{#editor-plugins/verkozenen-lijst}}
+      {{#mandataris-aanstelling-tabel/output}}
         template block text
-      {{/editor-plugins/verkozenen-lijst}}
+      {{/mandataris-aanstelling-tabel/output}}
     `);
 
     assert.equal(this.element.textContent.trim(), 'template block text');

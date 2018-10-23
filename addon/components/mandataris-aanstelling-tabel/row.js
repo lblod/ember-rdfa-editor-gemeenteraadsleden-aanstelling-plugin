@@ -1,7 +1,8 @@
 import Component from '@ember/component';
-import layout from '../../templates/components/editor-plugins/verkozene-row';
+import layout from '../../templates/components/mandataris-aanstelling-tabel/row';
 import { isEmpty } from '@ember/utils';
 import { inject as service } from '@ember/service';
+
 export default Component.extend({
   layout,
   tagName: '',
@@ -23,8 +24,9 @@ export default Component.extend({
             isResultaatVan: { ':id:': this.verkozene.id }
           }
         });
+        console.log(this.lijst);
         this.set('resultaat', verkiezingsresultaat.get('firstObject'));
       }
     }
-  }
+}
 });

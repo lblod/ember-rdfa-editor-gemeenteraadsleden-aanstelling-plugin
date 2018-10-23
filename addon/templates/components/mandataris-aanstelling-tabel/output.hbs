@@ -1,0 +1,65 @@
+<table class="data-table data-table--lined data-table--zebra data-table--tight" property="ext:mandatarisTabelInput">
+  <thead>
+    <tr>
+      <th>Rang</th>
+      <th>Voornaam &amp; Familienaam</th>
+      <th>Begin mandaat</th>
+      <th>Einde mandaat</th>
+      <th>Stemmen</th>
+      <th>Lijst</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each verkozenen as |verkozene|}}
+      {{#mandataris-aanstelling-tabel/row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
+        <tr>
+          <td>
+            {{#with-rdfa-resource resource=verkozene as |ctx|}}
+              {{ctx.prop p="rangorde"}}
+            {{/with-rdfa-resource}}
+          </td>
+          <td>
+            {{#with-rdfa-resource resource=verkozene as |ctx|}}
+              {{#ctx.linked-resource p="persoon" as |model persoon|}}
+                {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
+              {{/ctx.linked-resource}}
+              <br>
+              {{#ctx.linked-resource p="mandaat" as |model mandaat|}}
+                {{model.bestuursfunctie.label}}
+              {{/ctx.linked-resource}}
+            {{/with-rdfa-resource}}
+          </td>
+          <td>
+            {{#each verkozene.oudeMandaten as |mandaat|}}
+              {{mandaat.start}}
+            {{/each}}
+          </td>
+          <td>
+            {{#each verkozene.oudeMandaten as |mandaat|}}
+              {{mandaat.einde}}
+            {{/each}}
+          </td>
+          <td>
+            {{#if row.resultaat}}
+              {{#with-rdfa-resource resource=verkozene as |ctx|}}
+                {{#ctx.linked-resource p="persoon" as |model persoon|}}
+                  {{#ctx.linked-resource resource=persoon p="verkiezingsresultaten" as |model resultaat|}}
+                    {{resultaat.prop resource=row.resultaat p="aantalNaamstemmen"}}
+                  {{/ctx.linked-resource}}
+                {{/ctx.linked-resource}}
+              {{/with-rdfa-resource}}
+            {{/if}}
+          </td>
+          <td>
+            {{#if row.lijst}}
+              {{#with-rdfa-resource resource=row.lijst as |ctx|}}
+                {{ctx.prop p="lijstnaam"}}
+                <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+              {{/with-rdfa-resource}}
+            {{/if}}
+          </td>
+        </tr>
+        {{/mandataris-aanstelling-tabel/row}}
+    {{/each}}
+  </tbody>
+</table>

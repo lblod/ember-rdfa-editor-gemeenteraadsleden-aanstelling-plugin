@@ -45,10 +45,9 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     }
     const tables = this.extractTables(contexts);
     for (const table of tables) {
-      const richNode = editor.getRichNodeFor(table);
-      const location = [ richNode.start, richNode.end ];
+      const location = [ table.start, table.end ];
       hintsRegistry.removeHintsInRegion(location, hrId, this.who);
-      const card = this.generateCard(hrId, hintsRegistry, editor, { location, node: table, noHighlight: true});
+      const card = this.generateCard(hrId, hintsRegistry, editor, { location, node: table.domNode, noHighlight: true});
       hintsRegistry.addHints(hrId, this.who, [ card ]);
     }
   }),
@@ -90,14 +89,14 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
         return node;
     };
     const parentTableOf = function (node) {
-      if ( ! node.tagName || node.tagName.toLowerCase() !== "table")
-        return parentTableOf(node.parentNode);
-      else
+      if ( node.type === "tag" && node.domNode.tagName.toLowerCase() === "table")
         return node;
+      else
+        return parentTableOf(node.parent);
     };
     const relevantNodes = relevantContexts.map((context) => {
       const textNode = findFirstTextElement(context.richNode);
-      const table = parentTableOf(textNode.domNode);
+      const table = parentTableOf(textNode);
       return table;
     });
     return new Set(relevantNodes);
@@ -137,10 +136,10 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     return EmberObject.create({
       info: {
         who: this.get('who'),
-        bestuursorgaan: hint.bestuursorgaan,
         location: hint.location,
         hrId, hintsRegistry, editor,
-        node: hint.node
+        node: hint.node,
+        bestuursfunctie: 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000011' // TODO: hardcoded for now
       },
       options: { noHighlight: hint.noHighlight },
       location: hint.location,

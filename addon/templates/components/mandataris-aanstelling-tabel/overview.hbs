@@ -1,0 +1,76 @@
+<table class="data-table data-table--lined data-table--zebra data-table--tight">
+  <thead>
+    <tr>
+      <th>Rangorde</th>
+      <th>Voornaam &amp; Familienaam</th>
+      <th class="data-table--nested">
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th colspan="2">Afgelopen mandaten</th>
+            </tr>
+            <tr>
+              <th style="max-width: 5rem;">Begin</th>
+              <th style="max-width: 5rem;">Einde</th>
+            </tr>
+          </thead>
+        </table>
+      </th>
+      <th>Stemmen</th>
+      <th>Lijst</th>
+      <th>Acties</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each verkozenen as |verkozene|}}
+      {{#mandataris-aanstelling-tabel/row verkozene=verkozene bestuursorgaan=bestuursorgaan as |row|}}
+        <tr>
+          <td>
+            <strong>{{verkozene.rangorde}}</strong>
+            {{#wu-link-button class="button--link button--tiny" isNarrow=true onClick=(action 'up' verkozene)}}
+              <i class="vi vi-burger-alt button__icon vi-u-180deg vi-u-xs"></i>
+            {{/wu-link-button}}
+            {{#wu-link-button class="button--link button--tiny" isNarrow=true onClick=(action 'down' verkozene)}}
+              <i class="vi vi-burger-alt button__icon vi-u-xs"></i>
+            {{/wu-link-button}}
+          </td>
+          <td><strong>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</strong></td>
+          <td class="data-table--nested">
+            <table>
+              <tbody>
+                {{#each verkozene.oudeMandaten as |mandaat|}}
+                  <tr>
+                    <td>
+                      {{#each verkozene.oudeMandaten as |mandaat|}}
+                        {{mandaat.start}}
+                      {{/each}}
+                    </td>
+                    <td>
+                      {{#each verkozene.oudeMandaten as |mandaat|}}
+                        {{mandaat.einde}}
+                      {{/each}}
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </td>
+          <td>{{row.resultaat.aantalNaamstemmen}}</td>
+          <td>{{row.lijst.lijstnaam}}</td>
+          <td>
+            {{#wu-button-group class="u-spacer--tiny"}}
+              {{#wu-button size="small" isNarrow=true label="Bewerk" onClick=(action 'edit' verkozene)}}
+                <i class="vi vi-edit"></i> Bewerk afgelopen mandaten
+              {{/wu-button}}
+              {{#wu-button size="small" class="button--alt" isNarrow=true onClick=(action 'remove' verkozene)}}
+                <i class="vi vi-cross"></i> Verwijder raadslid
+              {{/wu-button}}
+            {{/wu-button-group}}
+          </td>
+        </tr>
+      {{/mandataris-aanstelling-tabel/row}}
+    {{else}}
+      <td colspan="4">Er werden geen effectief verkozenen gevonden</td>
+    {{/each}}
+  </tbody>
+</table>

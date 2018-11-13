@@ -24,7 +24,9 @@
               {{/ctx.linked-resource}}
               <br>
               {{#ctx.linked-resource p="mandaat" as |model mandaat|}}
-                {{model.bestuursfunctie.label}}
+                <span property="org:role" resource="{{model.bestuursfunctie.uri}}">
+                  <span property="skos:prefLabel">{{model.bestuursfunctie.label}}</span>
+                </span>
               {{/ctx.linked-resource}}
             {{/with-rdfa-resource}}
           </td>

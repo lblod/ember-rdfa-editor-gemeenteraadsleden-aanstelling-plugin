@@ -23,6 +23,6 @@ export default EmberObject.extend({
     this._super(...arguments);
     this.set('oudeMandaten', A());
     if (! this.uri)
-      this.set('uri', `http://data.lblod.info/id/mandaten/${uuid()}`);
+      this.set('uri', `http://data.lblod.info/id/mandatarissen/${uuid()}`);
   }
 });

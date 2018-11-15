@@ -40,14 +40,15 @@
                 {{#each verkozene.oudeMandaten as |mandaat|}}
                   <tr>
                     <td>
-                      {{#each verkozene.oudeMandaten as |mandaat|}}
+                      <p class="u-spacer--tiny">
                         {{moment-format mandaat.start 'YYYY-MM-DD'}}
-                      {{/each}}
+                      </p>
                     </td>
+
                     <td>
-                      {{#each verkozene.oudeMandaten as |mandaat|}}
+                      <p class="u-spacer--tiny">
                         {{moment-format mandaat.einde 'YYYY-MM-DD'}}
-                      {{/each}}
+                      </p>
                     </td>
                   </tr>
                 {{/each}}
@@ -57,7 +58,7 @@
           <td>{{verkozene.resultaat.aantalNaamstemmen}}</td>
           <td>{{verkozene.lijst.lijstnaam}}</td>
           <td>
-            {{#wu-button-group class="u-spacer--tiny"}}
+            {{#wu-button-group}}
               {{#wu-button size="small" isNarrow=true label="Bewerk" onClick=(action 'edit' verkozene)}}
                 <i class="vi vi-edit"></i> Bewerk afgelopen mandaten
               {{/wu-button}}

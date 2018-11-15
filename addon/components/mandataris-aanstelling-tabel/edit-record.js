@@ -12,7 +12,7 @@ export default Component.extend({
       this.oudeMandaten.removeObject(mandaat);
     },
     addOldMandaat(){
-      this.oudeMandaten.pushObject(AanTeStellenMandataris.create({ einde: 'tot heden'}));
+      this.oudeMandaten.pushObject(AanTeStellenMandataris.create({}));
     },
     close() {
       this.set('record', null);

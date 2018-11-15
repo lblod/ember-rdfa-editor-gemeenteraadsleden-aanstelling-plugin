@@ -43,7 +43,7 @@ export default Component.extend({
         aantestellen.pushObject(AanTeStellenMandataris.create({
           persoon: verkozene,
           rangorde: orde++,
-          start: this.bestuursorgaan.bindingStart,
+          start: this.startDate,
           einde: this.bestuursorgaan.bindingEinde,
           status: this.defaultStatus,
           mandaat: this.defaultMandaat,

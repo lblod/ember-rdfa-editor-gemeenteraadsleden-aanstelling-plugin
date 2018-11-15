@@ -43,6 +43,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
 
     for (var context of contexts) {
       this.setBestuursorgaanIfSet(context.context);
+      this.setStartDateIfSet(context.context);
       if (this.detectInsertTableContext(context)) {
         const index = context.text.toLowerCase().indexOf(textToMatch);
         const location = this.normalizeLocation([index, index + textToMatch.length], context.region);
@@ -126,7 +127,15 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
       }
     }
   },
-
+  setStartDateIfSet(triples) {
+    const zitting = triples.find((triple) => triple.object === 'http://data.vlaanderen.be/ns/besluit#Zitting');
+    if (zitting) {
+      const startDate = triples.find((triple) => triple.subject === zitting.subject && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#geplandeStart');
+      if (startDate) {
+        this.set('startDate', startDate.object);
+      }
+    }
+  },
   /**
    * Given context object, tries to detect a context the plugin can work on
    *

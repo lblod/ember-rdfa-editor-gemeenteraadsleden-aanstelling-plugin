@@ -17,7 +17,7 @@ import { task } from 'ember-concurrency';
 export default Component.extend({
   layout,
   store: service(),
-  orgaan: service('rdfa-editor-gemeenteraadsleden-aanstelling-plugin'),
+  aanstelling: service('rdfa-editor-gemeenteraadsleden-aanstelling-plugin'),
   /**
    * Region on which the card applies
    * @property location
@@ -49,7 +49,8 @@ export default Component.extend({
    * @private
   */
   hintsRegistry: reads('info.hintsRegistry'),
-  bestuursorgaan: reads('orgaan.bestuursorgaan'),
+  bestuursorgaan: reads('aanstelling.bestuursorgaan'),
+  startDate: reads('aanstelling.startDate'),
   bestuursfunctie: reads('info.bestuursfunctie'),
 
   outputId: computed('id', function() { return `output-mandataris-tabel-${this.id}`;}),

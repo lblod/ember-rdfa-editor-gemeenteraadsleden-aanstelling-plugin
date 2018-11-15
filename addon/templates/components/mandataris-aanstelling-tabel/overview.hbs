@@ -3,19 +3,8 @@
     <tr>
       <th>Rangorde</th>
       <th>Voornaam &amp; Familienaam</th>
-      <th class="data-table--nested">
-        <table class="data-table data-table--lined data-table--zebra data-table--tight">
-          <thead>
-            <tr>
-              <th colspan="2">Afgelopen mandaten</th>
-            </tr>
-            <tr>
-              <th style="max-width: 5rem;">Begin</th>
-              <th style="max-width: 5rem;">Einde</th>
-            </tr>
-          </thead>
-        </table>
-      </th>
+      <th>Start mandaat</th>
+      <th>Ancieniteit</th>
       <th>Stemmen</th>
       <th>Lijst</th>
       <th>Acties</th>
@@ -34,27 +23,8 @@
             {{/wu-link-button}}
           </td>
           <td><strong>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</strong></td>
-          <td class="data-table--nested">
-            <table>
-              <tbody>
-                {{#each verkozene.oudeMandaten as |mandaat|}}
-                  <tr>
-                    <td>
-                      <p class="u-spacer--tiny">
-                        {{moment-format mandaat.start 'YYYY-MM-DD'}}
-                      </p>
-                    </td>
-
-                    <td>
-                      <p class="u-spacer--tiny">
-                        {{moment-format mandaat.einde 'YYYY-MM-DD'}}
-                      </p>
-                    </td>
-                  </tr>
-                {{/each}}
-              </tbody>
-            </table>
-          </td>
+          <td>{{wu-datepicker value=verkozene.start}}</td>
+          <td>{{verkozene.ancieniteit}}</td>
           <td>{{verkozene.resultaat.aantalNaamstemmen}}</td>
           <td>{{verkozene.lijst.lijstnaam}}</td>
           <td>

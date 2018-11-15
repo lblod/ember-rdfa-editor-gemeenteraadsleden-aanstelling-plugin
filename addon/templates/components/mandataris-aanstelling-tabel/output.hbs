@@ -30,12 +30,16 @@
         </td>
         <td class="u-hidden">
           {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
-            {{#mandaat.prop resource=value p="einde"}}
+           {{#if model.einde}}
+            {{#mandaat.prop resource=model p="einde"}}
               {{moment-format model.einde 'YYYY-MM-DD'}}
             {{/mandaat.prop}}
-            {{#mandaat.prop resource=value p="start"}}
+           {{/if}}
+           {{#if model.start}}
+            {{#mandaat.prop resource=model p="start"}}
               {{moment-format model.start 'YYYY-MM-DD'}}
             {{/mandaat.prop}}
+           {{/if}}
           {{/rdfa/ctx-each-resource}}
           {{#if verkozene.resultaat}}
             {{#with-rdfa-resource resource=verkozene.resultaat as |ctx|}}

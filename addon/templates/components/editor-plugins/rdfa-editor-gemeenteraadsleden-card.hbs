@@ -9,20 +9,20 @@
         <p class="u-spacer--tiny"><strong>Gelieve eerst een bestuursorgaan te selecteren</strong> om een tabel in te voegen voor de rangorde van de gemeenteraadsleden.</p>
       {{/if}}
     </div>
-{{!--     <div class="col--2-12 u-align-right">
-      <a class="link--icon--close" href="#">
-        <span class="u-visually-hidden">Venster sluiten</span>
-      </a>
+    {{!--     <div class="col--2-12 u-align-right">
+    <a class="link--icon--close" href="#">
+    <span class="u-visually-hidden">Venster sluiten</span>
+    </a>
     </div> --}}
   </div>
 </div>
 {{#if bestuursorgaan}}
   <div class="modal-dialog__footer">
     {{#if fetchResources.isRunning}}
-      Aan het laden...
+      <p class="loader"><span class="u-visually-hidden">Aan het laden</span></p>
     {{else}}
-    {{#wu-button-group}}
-       {{#if bestuursorgaan}}
+      {{#wu-button-group}}
+        {{#if bestuursorgaan}}
           {{#if info.node}}
             {{wu-button
               label="Bewerk tabel"
@@ -35,21 +35,21 @@
               isNarrow=true
               onClick=(action 'togglePopup')
             }}
-         {{/if}}
+          {{/if}}
         {{/if}}
-  {{!--     {{wu-button
+        {{!--     {{wu-button
         label="Annuleer (todo)"
         class="button--alt"
         isNarrow=true
         onClick=null
-      }}
-      {{wu-button
+        }}
+        {{wu-button
         label="Negeer suggestie (todo)"
         class="button--link button--link--dark"
         size="small"
         isNarrow=true
         onClick=null}} --}}
-    {{/wu-button-group}}
+      {{/wu-button-group}}
     {{/if}}
   </div>
 {{/if}}

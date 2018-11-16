@@ -63,7 +63,10 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     function setPropIfTripleFound(triples, obj, prop) {
       const triple = triples.find((t) => t.predicate === obj.rdfaBindings[prop]);
       if (triple) {
-        obj.set(prop, triple.object.trim());
+        if (triple.datatype === 'http://www.w3.org/2001/XMLSchema#date')
+          obj.set(prop, new Date(triple.object.trim()));
+        else
+          obj.set(prop, triple.object.trim());
       }
     }
     const mandataris = AanTeStellenMandataris.create({ uri: triples[0].subject});

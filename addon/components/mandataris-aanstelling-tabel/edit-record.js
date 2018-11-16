@@ -1,12 +1,16 @@
 import Component from '@ember/component';
 import layout from '../../templates/components/mandataris-aanstelling-tabel/edit-record';
 import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
+import { sort } from '@ember/object/computed';
+
 export default Component.extend({
   layout,
   didReceiveAttrs() {
     if (this.record)
       this.set('oudeMandaten', this.record.oudeMandaten);
   },
+  mandatenSort:['start'],
+  sortedMandaten: sort('oudeMandaten', 'mandatenSort'),
   actions: {
     removeOldMandaat(mandaat) {
       this.oudeMandaten.removeObject(mandaat);

@@ -24,21 +24,21 @@
           {{/rdfa/ctx-linked-resource}}
         </td>
         <td>
-          {{#rdfa/ctx-prop resource=verkozene p="start"}}
-            {{moment-format verkozene.start 'YYYY-MM-DD'}}
-          {{/rdfa/ctx-prop}}
+            <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
+              {{moment-format verkozene.start 'YYYY-MM-DD'}}
+            </span>
         </td>
         <td class="u-hidden">
           {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
-           {{#if model.einde}}
-            {{#mandaat.prop resource=model p="einde"}}
-              {{moment-format model.einde 'YYYY-MM-DD'}}
-            {{/mandaat.prop}}
-           {{/if}}
-           {{#if model.start}}
-            {{#mandaat.prop resource=model p="start"}}
-              {{moment-format model.start 'YYYY-MM-DD'}}
-            {{/mandaat.prop}}
+            {{#if model.einde}}
+              <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>
+                {{moment-format model.einde 'YYYY-MM-DD'}}
+              </span>
+            {{/if}}
+            {{#if model.start}}
+              <span property="mandaat:start" datatype="xsd:date" content={{moment-format model.start 'YYYY-MM-DD'}}>
+                {{moment-format model.start 'YYYY-MM-DD'}}
+              </span>
            {{/if}}
           {{/rdfa/ctx-each-resource}}
           {{#if verkozene.resultaat}}

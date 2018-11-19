@@ -1,12 +1,10 @@
 import Component from '@ember/component';
 import layout from '../../templates/components/editor-plugins/mandataris-aanstelling-tabel';
-import { bool } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
 
 export default Component.extend({
   layout,
-  isEditing: bool('record'),
   store: service(),
   didReceiveAttrs() {
     this.set('record', null);
@@ -44,7 +42,7 @@ export default Component.extend({
       this.renumberVerkozenen();
     },
     setRecord(verkozene) {
-      this.set('record', verkozene);
+      this.setRecord(verkozene);
     }
   }
 });

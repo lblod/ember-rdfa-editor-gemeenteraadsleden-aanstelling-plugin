@@ -1,4 +1,4 @@
-import { reads, filterBy } from '@ember/object/computed';
+import { reads, filterBy, bool } from '@ember/object/computed';
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
@@ -18,6 +18,7 @@ import { A } from '@ember/array';
 export default Component.extend({
   layout,
   store: service(),
+  isEditing: bool('record'),
   aanstelling: service('rdfa-editor-gemeenteraadsleden-aanstelling-plugin'),
   /**
    * Region on which the card applies
@@ -61,6 +62,8 @@ export default Component.extend({
   outputId: computed('id', function() { return `output-mandataris-tabel-${this.id}`;}),
   async didReceiveAttrs() {
     this.fetchResources.perform();
+    this.set('currentStep', null);
+    this.set('record', null);
   },
   fetchResources: task( function * () {
     if (this.bestuursorgaan && this.bestuursfunctie) {
@@ -131,6 +134,9 @@ export default Component.extend({
         lijst: persoon.isKandidaatVoor.firstObject
       });
       this.mandatarissen.pushObject(opvolger);
+    },
+    setRecord(record) {
+      this.set('record', record);
     }
   }
 });

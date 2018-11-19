@@ -61,46 +61,65 @@
      dialog-content-class="modal-dialog__content--sectioned"
      onClose=(action 'togglePopup')
      as |m|}}
-    {{#m.content sectioned=true}}
-      {{#wu-wizard finish=(action 'insert') as |wizard|}}
-        {{#wizard.step as |step|}}
-          {{step.header title='samenstelling van de gemeenteraad'}}
-          {{#step.pane}}
+    {{#wu-wizard isNumeric=true currentStep=currentStep as |wizard|}}
+      {{#wizard.step as |step|}}
+        {{step.header title='samenstelling van de gemeenteraad'}}
+        {{#step.pane as |pane|}}
+          {{#m.content sectioned=true}}
             {{mandataris-aanstelling-tabel/samenstelling
               mandatarissen=mandatarissen
               defaultMandaat=mandaat
               bestuursorgaan=bestuursorgaan
               addMandataris=(action 'addMandataris')
             }}
+          {{/m.content}}
+          {{#m.buttons as |b|}}
+            {{wizard.next}}
+            {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
+            {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+          {{/m.buttons}}
+        {{/step.pane}}
+      {{/wizard.step}}
+      {{#wizard.step as |step|}}
+        {{#if isEditing}}
+          {{#step.pane}}
+            {{#m.content sectioned=true}}
+              {{mandataris-aanstelling-tabel/edit-record record=record}}
+            {{/m.content}}
+            {{#m.buttons}}
+              {{#wu-button onClick=(action 'setRecord')}}Bewaar en keer terug naar tabel{{/wu-button}}
+            {{/m.buttons}}
           {{/step.pane}}
-        {{/wizard.step}}
-        {{#wizard.step as |step|}}
+        {{else}}
           {{step.header title='rangorde van de gemeenteraadsleden'}}
           {{#step.pane}}
-
-            {{#editor-plugins/mandataris-aanstelling-tabel
-               bestuursorgaan=bestuursorgaan
-               defaultMandaat=mandaat
-               mandatarissen=opgenomenMandaten
-               startDate=startDate
-               as |table|}}
-              {{#if table.isEditing}}
-                {{table.editRecord}}
-              {{else}}
+            {{#m.content sectioned=true}}
+              {{#editor-plugins/mandataris-aanstelling-tabel
+                 bestuursorgaan=bestuursorgaan
+                 defaultMandaat=mandaat
+                 mandatarissen=opgenomenMandaten
+                 startDate=startDate
+                 setRecord=(action 'setRecord')
+                 as |table|}}
                 {{table.overview}}
-              {{/if}}
-              {{table.output
-                id=outputId
-                class="u-hidden"
-                afstandenVanMandaat=afstandenVanMandaat
-                onverenigbaarheden=onverenigbaarheden
-                afwezigenMetKennisGeving=afwezigenMetKennisGeving
-                afwezigen=afwezigen
-              }}
-            {{/editor-plugins/mandataris-aanstelling-tabel}}
+                {{table.output
+                  id=outputId
+                  class="u-hidden"
+                  afstandenVanMandaat=afstandenVanMandaat
+                  onverenigbaarheden=onverenigbaarheden
+                  afwezigenMetKennisGeving=afwezigenMetKennisGeving
+                  afwezigen=afwezigen
+                }}
+              {{/editor-plugins/mandataris-aanstelling-tabel}}
+            {{/m.content}}
+            {{#m.buttons as |b|}}
+              {{wizard.previous}}
+              {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
+              {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+            {{/m.buttons}}
           {{/step.pane}}
-        {{/wizard.step}}
-      {{/wu-wizard}}
-    {{/m.content}}
+        {{/if}}
+      {{/wizard.step}}
+    {{/wu-wizard}}
   {{/wu-modal}}
 {{/if}}

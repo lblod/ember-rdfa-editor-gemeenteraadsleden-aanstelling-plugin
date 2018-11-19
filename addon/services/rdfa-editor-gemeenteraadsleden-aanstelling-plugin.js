@@ -8,7 +8,7 @@ import AanTeStellenMandataris from '../models/aan-te-stellen-mandataris';
 
 import { A } from '@ember/array';
 
-const textToMatch = "voeg rangorde tabel gemeenteraadsleden toe.";
+const textToMatch = "beheer aanstelling gemeenteraadsleden.";
 const oudMandaatPredicate = 'http://mu.semte.ch/vocabularies/ext/oudMandaat';
 
 /**
@@ -166,8 +166,10 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
         return node;
     };
     const parentTableOf = function (node) {
-      if ( node.type === "tag" && node.domNode.tagName.toLowerCase() === "table")
-        return node;
+      if ( node.type === "tag" && node.domNode.getAttribute('property') === 'ext:mandatarisTabelInput')
+      {
+       return node;
+      }
       else
         return parentTableOf(node.parent);
     };

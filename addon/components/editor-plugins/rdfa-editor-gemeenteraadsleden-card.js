@@ -66,7 +66,7 @@ export default Component.extend({
     if (this.bestuursorgaan && this.bestuursfunctie) {
       const mandaten = yield this.store.query('mandaat', {
         filter: {
-          'bevat-in': {':id:': this.bestuursorgaan.id },
+          'bevat-in': {':uri:': this.bestuursorgaan },
           'bestuursfunctie': { ':uri:': this.bestuursfunctie }
         }
       });

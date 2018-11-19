@@ -5,8 +5,6 @@ import { task } from 'ember-concurrency';
 import { inject as service } from '@ember/service';
 import RdfaContextScanner from '@lblod/ember-rdfa-editor/utils/rdfa-context-scanner';
 import AanTeStellenMandataris from '../models/aan-te-stellen-mandataris';
-import { computed } from '@ember/object';
-import { merge } from '@ember/polyfills';
 import { A } from '@ember/array';
 import { defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../models/aan-te-stellen-mandataris';
 
@@ -16,6 +14,7 @@ const afstandMandaatPredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigd
 const onverenigbaarheidPredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdOnverenigbaarheid';
 const afwezigMetKennisnamePredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdAfwezigheidMetKennisGeving';
 const afwezigZonderKennisnamePredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdAfwezigheid';
+const bestuursfunctie = 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000011'; // TODO: hardcoded for now
 
 /**
  * Service responsible for correct annotation of dates
@@ -29,7 +28,6 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
   store: service(),
   init(){
     this._super(...arguments);
-    const config = getOwner(this).resolveRegistration('config:environment');
   },
 
   personQueryFilter(uris) {
@@ -92,12 +90,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     setPropIfTripleFound(triples, mandataris, 'rangorde');
     setPropIfTripleFound(triples, mandataris, 'start');
     setPropIfTripleFound(triples, mandataris, 'einde');
-    const mandaatURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.mandaat);
-    if (mandaatURI) {
-      // TODO: cache this!
-      const mandaat = await this.store.query('mandaat', { filter:{':uri:': mandaatURI.object}});
-      mandataris.set('mandaat', mandaat.get('firstObject'));
-    }
+    mandataris.set('mandaat', this.mandaat);
     const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
     if (persoonURI) {
       const persoon = await this.store.query('persoon', this.personQueryFilter([persoonURI.object]));
@@ -120,6 +113,16 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     }
     else
       return A();
+  },
+  async fetchMandaat() {
+    const mandaten = await this.store.query('mandaat', {
+      filter: {
+        'bevat-in': {':uri:': this.bestuursorgaan },
+        'bestuursfunctie': { ':uri:': bestuursfunctie }
+      },
+      include: 'bestuursfunctie'
+    });
+    this.set('mandaat', mandaten.get('firstObject'));
   },
   async extractData(richNode) {
     const contextScanner = RdfaContextScanner.create({});
@@ -154,6 +157,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
       const bestuursorgaan = triples.find((triple) => triple.subject === zitting.subject && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#isGehoudenDoor');
       if (bestuursorgaan) {
         this.set('bestuursorgaan', bestuursorgaan.object);
+        this.fetchMandaat();
       }
     }
   },
@@ -246,7 +250,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
         hrId, hintsRegistry, editor,
         node: hint.node,
         data: hint.data,
-        bestuursfunctie: 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000011' // TODO: hardcoded for now
+        bestuursfunctie: bestuursfunctie
       },
       options: { noHighlight: hint.noHighlight },
       location: hint.location,

@@ -27,7 +27,7 @@
           <li>De afwezigheid met kennisgeving van:
             <ul>
               {{#each afwezigenMetKennisGeving as |verkozene|}}
-                <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{persoon.achternaam}};</span></li>
+                <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
               {{/each}}
             </ul>
           </li>
@@ -59,9 +59,7 @@
           {{#each verkozenen as |verkozene|}}
             <tr>
               <td>
-                {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
-                  {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
-                {{/rdfa/ctx-linked-resource}}
+                {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
               </td>
               <td>
                 {{#if verkozene.lijst}}

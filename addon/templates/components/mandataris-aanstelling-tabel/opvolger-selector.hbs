@@ -1,0 +1,13 @@
+{{#power-select
+   loadingMessage="Aan het laden..."
+   noMatchesMessage="Geen resultaten"
+   searchMessage="Typ om te zoeken"
+   renderInPlace=true
+   placeholder="Zoek op lijstnaam"
+   allowClear=allowClear
+   search=(perform searchByName)
+   selected=opvolger
+   onchange=(action "select")
+   as |persoon|}}
+  {{persoon.gebruikteVoornaam}} {{persoon.achternaam}}, {{persoon.isKandidaatVoor.firstObject.lijstnaam}} ({{persoon.verkiezingsresultaten.firstObject.plaatsRangorde}})
+{{/power-select}}

@@ -5,9 +5,9 @@
       <ul class="bullet-list">
         {{#if afstandenVanMandaat.length}}
           <li>de afstanden van mandaat van volgende verkozenen:
-          <ul>
-          {{#each afstandenVanMandaat as |persoon|}}
-          <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{persoon.uri}}>{{persoon.gebruikteVoornaam}} {{persoon.achternaam}};</span></li>
+            <ul>
+              {{#each afstandenVanMandaat as |verkozene|}}
+                <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
           {{/each}}
           </ul>
           </li>
@@ -17,17 +17,17 @@
         {{#if onverenigbaarheden.length}}
           <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozen:
             <ul>
-              {{#each onverenigbaarheden as |persoon|}}
-                <li><span property="ext:bekrachtigdOnverenigbaarheid" resource={{persoon.uri}}>{{persoon.gebruikteVoornaam}} {{persoon.achternaam}};</span></li>
-             {{/each}}
+              {{#each onverenigbaarheden as |verkozene|}}
+                <li><span property="ext:bekrachtigdOnverenigbaarheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+              {{/each}}
             </ul>
           </li>
         {{/if}}
         {{#if afwezigenMetKennisGeving.length}}
           <li>De afwezigheid met kennisgeving van:
             <ul>
-              {{#each afwezigenMetKennisGeving as |persoon|}}
-                <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{persoon.uri}}>{{persoon.gebruikteVoornaam}} {{persoon.achternaam}};</span></li>
+              {{#each afwezigenMetKennisGeving as |verkozene|}}
+                <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{persoon.achternaam}};</span></li>
               {{/each}}
             </ul>
           </li>
@@ -35,8 +35,8 @@
         {{#if afwezigen.length}}
           <li>De afwezigheid zonder kennisgeving van volgende verkozenen:
             <ul>
-              {{#each afwezigen as |persoon|}}
-                <li><span property="ext:bekrachtigdAfwezigheid" resource={{persoon.uri}}>{{persoon.gebruikteVoornaam}} {{persoon.achternaam}};</span></li>
+              {{#each afwezigen as |verkozene|}}
+                <li><span property="ext:bekrachtigdAfwezigheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
               {{/each}}
             </ul>
           </li>

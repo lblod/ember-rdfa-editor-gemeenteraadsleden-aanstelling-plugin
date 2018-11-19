@@ -3,9 +3,6 @@ import layout from '../../templates/components/editor-plugins/mandataris-aanstel
 import { bool } from '@ember/object/computed';
 import { inject as service } from '@ember/service';
 import { isEmpty } from '@ember/utils';
-import { A } from '@ember/array';
-import { warn } from '@ember/debug';
-import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
 
 export default Component.extend({
   layout,
@@ -13,48 +10,10 @@ export default Component.extend({
   store: service(),
   didReceiveAttrs() {
     this.set('record', null);
-    if (isEmpty(this.mandatarissen)) {
-      this.buildAanTeStellenMandatarissen();
-    }
-    else {
+    if (!isEmpty(this.mandatarissen)) {
+      var rangorde = 1;
+      this.mandatarissen.forEach( (mandataris) => mandataris.set('rangorde', rangorde++));
       this.set('verkozenen', this.mandatarissen);
-    }
-  },
-  async buildAanTeStellenMandatarissen() {
-    try {
-      const verkozenen = await this.store.query('persoon', {
-        filter: {
-          'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
-          'verkiezingsresultaten': {
-              'gevolg': { ':uri:': 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f'},
-              'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
-          }
-        },
-        include: 'verkiezingsresultaten,is-kandidaat-voor',
-        page: {
-          number: 0,
-          size: 100
-        }
-      });
-      const aantestellen = A();
-      var orde = 1;
-
-      verkozenen.sortBy('verkiezingsresultaten.firstObject.aantalNaamstemmen').reverse().forEach( (verkozene) =>  {
-        aantestellen.pushObject(AanTeStellenMandataris.create({
-          persoon: verkozene,
-          rangorde: orde++,
-          start: this.startDate,
-          einde: this.bestuursorgaan.bindingEinde,
-          status: this.defaultStatus,
-          mandaat: this.defaultMandaat,
-          resultaat: verkozene.verkiezingsresultaten.firstObject,
-          lijst: verkozene.isKandidaatVoor.firstObject
-        }));
-      });
-      this.set('verkozenen', aantestellen);
-    }
-    catch(e){
-      warn(e, 'gemeenteraadsleden-aanstelling-plugin.queryFailed');
     }
   },
   renumberVerkozenen() {

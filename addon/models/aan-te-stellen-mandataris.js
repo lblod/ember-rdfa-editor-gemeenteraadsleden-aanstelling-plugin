@@ -2,6 +2,13 @@ import { A } from '@ember/array';
 import EmberObject from '@ember/object';
 import { computed } from '@ember/object';
 import uuid from 'uuid/v4';
+
+const defaultStatus = 'opname mandaat';
+const afstandMandaat = 'afstand mandaat';
+const afwezigMetKennisname = 'afwezig met kennisname';
+const afwezigZonderKennisname = 'afwezig zonder kennisname';
+const onverenigbaarheid = 'situatie van onverenigbaarheid';
+
 export default EmberObject.extend({
   uri: null,
   rangorde: 0,
@@ -42,3 +49,5 @@ export default EmberObject.extend({
       this.set('uri', `http://data.lblod.info/id/mandatarissen/${uuid()}`);
   }
 });
+
+export {defaultStatus, afstandMandaat, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid};

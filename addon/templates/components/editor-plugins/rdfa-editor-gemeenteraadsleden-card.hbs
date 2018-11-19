@@ -61,30 +61,46 @@
      dialog-content-class="modal-dialog__content--sectioned"
      onClose=(action 'togglePopup')
      as |m|}}
-    {{#editor-plugins/mandataris-aanstelling-tabel
-       bestuursorgaan=bestuursorgaan
-       defaultMandaat=mandaat
-       mandatarissen=mandatarissen
-       startDate=startDate
-       as |table|}}
-      {{#m.content isSectioned=true}}
-        {{#if table.isEditing}}
-          {{table.editRecord}}
-        {{else}}
-          {{table.overview}}
-        {{/if}}
-        {{table.output id=outputId class="u-hidden"}}
-      {{/m.content}}
-      <div class="modal-dialog__footer">
-        {{#if table.isEditing}}
-          {{table.actions}}
-        {{else}}
-          {{#wu-button-group}}
-            {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
-            {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
-          {{/wu-button-group}}
-        {{/if}}
-      </div>
-    {{/editor-plugins/mandataris-aanstelling-tabel}}
+    {{#m.content sectioned=true}}
+      {{#wu-wizard finish=(action 'insert') as |wizard|}}
+        {{#wizard.step as |step|}}
+          {{step.header title='samenstelling van de gemeenteraad'}}
+          {{#step.pane}}
+            {{mandataris-aanstelling-tabel/samenstelling
+              mandatarissen=mandatarissen
+              defaultMandaat=mandaat
+              bestuursorgaan=bestuursorgaan
+              addMandataris=(action 'addMandataris')
+            }}
+          {{/step.pane}}
+        {{/wizard.step}}
+        {{#wizard.step as |step|}}
+          {{step.header title='rangorde van de gemeenteraadsleden'}}
+          {{#step.pane}}
+
+            {{#editor-plugins/mandataris-aanstelling-tabel
+               bestuursorgaan=bestuursorgaan
+               defaultMandaat=mandaat
+               mandatarissen=opgenomenMandaten
+               startDate=startDate
+               as |table|}}
+              {{#if table.isEditing}}
+                {{table.editRecord}}
+              {{else}}
+                {{table.overview}}
+              {{/if}}
+              {{table.output
+                id=outputId
+                class="u-hidden"
+                afstandenVanMandaat=afstandenVanMandaat
+                onverenigbaarheden=onverenigbaarheden
+                afwezigenMetKennisGeving=afwezigenMetKennisGeving
+                afwezigen=afwezigen
+              }}
+            {{/editor-plugins/mandataris-aanstelling-tabel}}
+          {{/step.pane}}
+        {{/wizard.step}}
+      {{/wu-wizard}}
+    {{/m.content}}
   {{/wu-modal}}
 {{/if}}

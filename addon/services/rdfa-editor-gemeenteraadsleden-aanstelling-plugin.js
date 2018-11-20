@@ -1,15 +1,19 @@
-import { getOwner } from '@ember/application';
 import Service from '@ember/service';
 import EmberObject from '@ember/object';
 import { task } from 'ember-concurrency';
 import { inject as service } from '@ember/service';
 import RdfaContextScanner from '@lblod/ember-rdfa-editor/utils/rdfa-context-scanner';
 import AanTeStellenMandataris from '../models/aan-te-stellen-mandataris';
-
 import { A } from '@ember/array';
+import { defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../models/aan-te-stellen-mandataris';
 
-const textToMatch = "voeg rangorde tabel gemeenteraadsleden toe.";
+const textToMatch = "beheer aanstelling gemeenteraadsleden.";
 const oudMandaatPredicate = 'http://mu.semte.ch/vocabularies/ext/oudMandaat';
+const afstandMandaatPredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdAfstandVanMandaatDoor';
+const onverenigbaarheidPredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdOnverenigbaarheid';
+const afwezigMetKennisnamePredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdAfwezigheidMetKennisGeving';
+const afwezigZonderKennisnamePredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdAfwezigheid';
+const bestuursfunctie = 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000011'; // TODO: hardcoded for now
 
 /**
  * Service responsible for correct annotation of dates
@@ -23,7 +27,19 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
   store: service(),
   init(){
     this._super(...arguments);
-    const config = getOwner(this).resolveRegistration('config:environment');
+  },
+
+  personQueryFilter(uris) {
+    return {
+      filter: {
+        ':uri:': uris.join(','),
+        'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
+        'verkiezingsresultaten': {
+          'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
+        }
+      },
+      include: 'verkiezingsresultaten,is-kandidaat-voor'
+    };
   },
 
   /**
@@ -63,37 +79,49 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     function setPropIfTripleFound(triples, obj, prop) {
       const triple = triples.find((t) => t.predicate === obj.rdfaBindings[prop]);
       if (triple) {
-        obj.set(prop, triple.object.trim());
+        if (triple.datatype === 'http://www.w3.org/2001/XMLSchema#date')
+          obj.set(prop, new Date(triple.object.trim()));
+        else
+          obj.set(prop, triple.object.trim());
       }
     }
-    const mandataris = AanTeStellenMandataris.create({ uri: triples[0].subject});
+    const mandataris = AanTeStellenMandataris.create({ uri: triples[0].subject, status: defaultStatus});
     setPropIfTripleFound(triples, mandataris, 'rangorde');
     setPropIfTripleFound(triples, mandataris, 'start');
     setPropIfTripleFound(triples, mandataris, 'einde');
-    const mandaatURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.mandaat);
-    if (mandaatURI) {
-      const mandaat = await this.store.query('mandaat', { filter:{':uri:': mandaatURI.object}});
-      mandataris.set('mandaat', mandaat.get('firstObject'));
-    }
+    mandataris.set('mandaat', this.mandaat);
     const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
     if (persoonURI) {
-      const persoon = await this.store.query('persoon',
-                                             {
-                                               filter: {
-                                                 ':uri:': persoonURI.object,
-                                                 'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
-                                                 'verkiezingsresultaten': {
-                                                   'gevolg': { ':uri:': 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f'},
-                                                   'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
-                                                 }
-                                               },
-                                               include: 'verkiezingsresultaten,is-kandidaat-voor'
-                                             });
+      const persoon = await this.store.query('persoon', this.personQueryFilter([persoonURI.object]));
       mandataris.set('persoon', persoon.get('firstObject'));
       mandataris.set('resultaat', mandataris.persoon.verkiezingsresultaten.firstObject);
       mandataris.set('lijst', mandataris.persoon.isKandidaatVoor.firstObject);
     }
     return mandataris;
+  },
+  async buildNietAangesteldeMandataris(triples, predicate, status) {
+    const uris = triples.filter((t) => t.predicate === predicate).map((t) => t.object);
+    if (uris.length > 0) {
+      const personen = await this.store.query('persoon', this.personQueryFilter(uris));
+      return personen.map( (persoon) => AanTeStellenMandataris.create({
+        persoon,
+        status: status,
+        lijst:persoon.isKandidaatVoor.firstObject,  // this works because of the filter
+        resultaat: persoon.verkiezingsresultaten.firstObject // this works because of the filter
+      }));
+    }
+    else
+      return A();
+  },
+  async fetchMandaat() {
+    const mandaten = await this.store.query('mandaat', {
+      filter: {
+        'bevat-in': {':uri:': this.bestuursorgaan },
+        'bestuursfunctie': { ':uri:': bestuursfunctie }
+      },
+      include: 'bestuursfunctie'
+    });
+    this.set('mandaat', mandaten.get('firstObject'));
   },
   async extractData(richNode) {
     const contextScanner = RdfaContextScanner.create({});
@@ -116,6 +144,10 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
         mandatarissen.pushObject(mandataris);
       }
     }
+    mandatarissen.pushObjects(await this.buildNietAangesteldeMandataris(triples, afstandMandaatPredicate, afstandMandaat));
+    mandatarissen.pushObjects(await this.buildNietAangesteldeMandataris(triples, onverenigbaarheidPredicate, onverenigbaarheid));
+    mandatarissen.pushObjects(await this.buildNietAangesteldeMandataris(triples, afwezigMetKennisnamePredicate, afwezigMetKennisname));
+    mandatarissen.pushObjects(await this.buildNietAangesteldeMandataris(triples, afwezigZonderKennisnamePredicate, afwezigZonderKennisname));
     return mandatarissen;
   },
   setBestuursorgaanIfSet(triples) {
@@ -124,6 +156,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
       const bestuursorgaan = triples.find((triple) => triple.subject === zitting.subject && triple.predicate === 'http://data.vlaanderen.be/ns/besluit#isGehoudenDoor');
       if (bestuursorgaan) {
         this.set('bestuursorgaan', bestuursorgaan.object);
+        this.fetchMandaat();
       }
     }
   },
@@ -163,8 +196,10 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
         return node;
     };
     const parentTableOf = function (node) {
-      if ( node.type === "tag" && node.domNode.tagName.toLowerCase() === "table")
-        return node;
+      if ( node.type === "tag" && node.domNode.getAttribute('property') === 'ext:mandatarisTabelInput')
+      {
+       return node;
+      }
       else
         return parentTableOf(node.parent);
     };
@@ -214,7 +249,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
         hrId, hintsRegistry, editor,
         node: hint.node,
         data: hint.data,
-        bestuursfunctie: 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000011' // TODO: hardcoded for now
+        bestuursfunctie: bestuursfunctie
       },
       options: { noHighlight: hint.noHighlight },
       location: hint.location,

@@ -1,15 +1,18 @@
-{{yield
-  (hash
+  {{#if buildAanTeStellenMandarissen.isRunning}}
+  <p class="loader"><span class="u-visually-hidden">Aan het laden</span></p>
+{{else}}
+  {{yield
+    (hash
     overview=(component 'mandataris-aanstelling-tabel/overview'
-                         verkozenen=verkozenen
-                         bestuursorgaan=bestuursorgaan
-                         startDate=startDate
-                         edit=(action 'setRecord')
-                         up=(action 'up')
-                         down=(action 'down')
-                         remove=(action 'remove')
-  )
-  output=(component 'mandataris-aanstelling-tabel/output' verkozenen=verkozenen bestuursorgaan=bestuursorgaan)
-  editRecord=(component 'mandataris-aanstelling-tabel/edit-record' record=record)
-  isEditing=isEditing)
-}}
+    verkozenen=verkozenen
+    bestuursorgaan=bestuursorgaan
+    startDate=startDate
+    edit=(action 'setRecord')
+    up=(action 'up')
+    down=(action 'down')
+    remove=(action 'remove')
+    )
+    output=(component 'mandataris-aanstelling-tabel/output' verkozenen=verkozenen bestuursorgaan=bestuursorgaan)
+    isEditing=isEditing)
+  }}
+{{/if}}

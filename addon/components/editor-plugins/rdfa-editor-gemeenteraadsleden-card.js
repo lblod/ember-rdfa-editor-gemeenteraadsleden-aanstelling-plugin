@@ -1,14 +1,15 @@
-import { reads } from '@ember/object/computed';
+import { reads, filterBy, bool } from '@ember/object/computed';
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
-import { A } from '@ember/array';
 import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
+import { defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../../models/aan-te-stellen-mandataris';
 import layout from '../../templates/components/editor-plugins/rdfa-editor-gemeenteraadsleden-card';
 import { task } from 'ember-concurrency';
+import { A } from '@ember/array';
 
 /**
-* Card displaying a hint of the Date plugin
+* Card displaying a hint of the gemeenteraadsleden plugin
 *
 * @module editor-ember-rdfa-editor-gemeenteraadsleden-plugin
 * @class EmberRdfaEditorGemeenteraadsledenCard
@@ -17,6 +18,7 @@ import { task } from 'ember-concurrency';
 export default Component.extend({
   layout,
   store: service(),
+  isEditing: bool('record'),
   aanstelling: service('rdfa-editor-gemeenteraadsleden-aanstelling-plugin'),
   /**
    * Region on which the card applies
@@ -52,16 +54,22 @@ export default Component.extend({
   bestuursorgaan: reads('aanstelling.bestuursorgaan'),
   startDate: reads('aanstelling.startDate'),
   bestuursfunctie: reads('info.bestuursfunctie'),
-
+  opgenomenMandaten: filterBy('mandatarissen','status', defaultStatus),
+  afstandenVanMandaat: filterBy('mandatarissen', 'status', afstandMandaat),
+  onverenigbaarheden: filterBy('mandatarissen', 'status', onverenigbaarheid),
+  afwezigenMetKennisGeving: filterBy('mandatarissen', 'status', afwezigMetKennisname),
+  afwezigen: filterBy('mandatarissen', 'status', afwezigZonderKennisname),
   outputId: computed('id', function() { return `output-mandataris-tabel-${this.id}`;}),
   async didReceiveAttrs() {
     this.fetchResources.perform();
+    this.set('currentStep', null);
+    this.set('record', null);
   },
   fetchResources: task( function * () {
     if (this.bestuursorgaan && this.bestuursfunctie) {
       const mandaten = yield this.store.query('mandaat', {
         filter: {
-          'bevat-in': {':id:': this.bestuursorgaan.id },
+          'bevat-in': {':uri:': this.bestuursorgaan },
           'bestuursfunctie': { ':uri:': this.bestuursfunctie }
         }
       });
@@ -70,8 +78,35 @@ export default Component.extend({
     if (this.info.node) {
       this.set('mandatarissen', yield this.info.data);
     }
-    else
-      this.set('mandatarissen', null);
+    else {
+      const verkozenen = yield this.store.query('persoon', {
+        filter: {
+          'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
+          'verkiezingsresultaten': {
+            'gevolg': { ':uri:': 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f'},
+            'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
+          }
+        },
+        include: 'verkiezingsresultaten,is-kandidaat-voor',
+        page: {
+          number: 0,
+          size: 100
+        }
+      });
+    const aantestellen = A();
+    verkozenen.sortBy('verkiezingsresultaten.firstObject.aantalNaamstemmen').reverse().forEach( (verkozene) =>  {
+      aantestellen.pushObject(AanTeStellenMandataris.create({
+        persoon: verkozene,
+        start: this.startDate,
+        einde: this.bestuursorgaan.bindingEinde,
+        status: defaultStatus,
+        mandaat: this.mandaat,
+        resultaat: verkozene.verkiezingsresultaten.firstObject,
+        lijst: verkozene.isKandidaatVoor.firstObject
+      }));
+    });
+      this.set('mandatarissen', aantestellen);
+    }
   }),
   actions: {
     insert(){
@@ -88,6 +123,20 @@ export default Component.extend({
     },
     togglePopup() {
       this.toggleProperty('popup');
+    },
+    addMandataris(persoon) {
+      const opvolger = AanTeStellenMandataris.create({
+        persoon: persoon,
+        start: this.startDate,
+        status: defaultStatus,
+        mandaat: this.mandaat,
+        resultaat: persoon.verkiezingsresultaten.firstObject,
+        lijst: persoon.isKandidaatVoor.firstObject
+      });
+      this.mandatarissen.pushObject(opvolger);
+    },
+    setRecord(record) {
+      this.set('record', record);
     }
   }
 });

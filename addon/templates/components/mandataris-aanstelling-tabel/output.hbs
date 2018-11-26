@@ -4,7 +4,7 @@
     <div property="prov:value"> Kennis te nemen van
       <ul class="bullet-list">
         {{#if afstandenVanMandaat.length}}
-          <li>de afstanden van mandaat van volgende verkozenen:
+          <li>De afstand van mandaat van volgende verkozenen:
             <ul class="bullet-list">
               {{#each afstandenVanMandaat as |verkozene|}}
                 <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
@@ -12,10 +12,10 @@
           </ul>
           </li>
         {{else}}
-          <li>het ontbreken van afstanden van mandaat;</li>
+          <li>Het ontbreken van afstanden van mandaat;</li>
         {{/if}}
         {{#if onverenigbaarheden.length}}
-          <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozen:
+          <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozenen:
             <ul class="bullet-list">
               {{#each onverenigbaarheden as |verkozene|}}
                 <li><span property="ext:bekrachtigdOnverenigbaarheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
@@ -78,7 +78,7 @@
 
   {{#mandataris-aanstelling-tabel/output-article}}
     <span property="eli:number">Artikel 3</span>
-    <div property="prov:value"> Akte te nemen van de eedaflegging in handen van de voorzitter:
+    <div property="prov:value"> Akte te nemen van de eedaflegging van
       <table class="data-table data-table--lined data-table--zebra data-table--tight">
         <thead>
           <tr>
@@ -111,6 +111,8 @@
           {{/each}}
         </tbody>
       </table>
+      <br>
+      en van de eedaflegging in handen van <span class="mark-highlight-manual">Voer naam burgemeester of oudste gemeenteraadslid in</span>.
     </div>
   {{/mandataris-aanstelling-tabel/output-article}}
 

@@ -10,34 +10,40 @@
     <tr>
       <th>Start</th>
       <th>Einde</th>
+      <th>Mandaat</th>
       <th>Acties</th>
     </tr>
   </thead>
   <tbody>
-    {{#each sortedMandaten as |mandaat|}}
-      <tr>
-        <td>
-          {{wu-datepicker value=mandaat.start}}
-        </td>
-        <td>
-          {{wu-datepicker value=mandaat.einde}}
-        </td>
-        <td>
-          {{#wu-button class="button--alt button--small button--narrow" onClick=(action 'removeOldMandaat' mandaat)}}<i class="vi vi-cross"></i> Verwijder mandaat{{/wu-button}}
-        </td>
-      </tr>
+    {{#if fetchOudeMandaten.isRunning}}
+      <p class="loader"><span class="u-visually-hidden">Aan het laden</span></p>
     {{else}}
+      {{#each sortedMandaten as |mandaat|}}
+        <tr>
+          <td>
+            {{wu-datepicker value=mandaat.start}}
+          </td>
+          <td>
+            {{wu-datepicker value=mandaat.einde}}
+          </td>
+          <td>{{mandaat.mandaat.bestuursfunctie.label}}</td>
+          <td>
+            {{#wu-button class="button--alt button--small button--narrow" onClick=(action 'removeOldMandaat' mandaat)}}<i class="vi vi-cross"></i> Verwijder mandaat{{/wu-button}}
+          </td>
+        </tr>
+      {{else}}
+        <tr>
+          <td colspan="3" class="u-align-center">
+            <p>Er werden nog geen afgelopen mandaten toegevoegd.</p>
+          </td>
+        </tr>
+      {{/each}}
       <tr>
         <td colspan="3" class="u-align-center">
-          <p>Er werden nog geen afgelopen mandaten toegevoegd.</p>
+          {{#wu-button class="button--alt button--small button--narrow" onClick=(action 'addOldMandaat' mandaat)}}<i class="vi vi-plus"></i> Voeg afgelopen mandaat toe{{/wu-button}}
         </td>
       </tr>
-    {{/each}}
-    <tr>
-      <td colspan="3" class="u-align-center">
-        {{#wu-button class="button--alt button--small button--narrow" onClick=(action 'addOldMandaat' mandaat)}}<i class="vi vi-plus"></i> Voeg afgelopen mandaat toe{{/wu-button}}
-      </td>
-    </tr>
+    {{/if}}
   </tbody>
 </table>
 <br>

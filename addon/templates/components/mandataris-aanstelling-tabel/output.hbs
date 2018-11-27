@@ -4,19 +4,19 @@
     <div property="prov:value"> Kennis te nemen van
       <ul class="bullet-list">
         {{#if afstandenVanMandaat.length}}
-          <li>de afstanden van mandaat van volgende verkozenen:
-            <ul>
+          <li>De afstand van mandaat van volgende verkozenen:
+            <ul class="bullet-list">
               {{#each afstandenVanMandaat as |verkozene|}}
                 <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
           {{/each}}
           </ul>
           </li>
         {{else}}
-          <li>het ontbreken van afstanden van mandaat;</li>
+          <li>Het ontbreken van afstanden van mandaat;</li>
         {{/if}}
         {{#if onverenigbaarheden.length}}
-          <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozen:
-            <ul>
+          <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozenen:
+            <ul class="bullet-list">
               {{#each onverenigbaarheden as |verkozene|}}
                 <li><span property="ext:bekrachtigdOnverenigbaarheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
               {{/each}}
@@ -25,7 +25,7 @@
         {{/if}}
         {{#if afwezigenMetKennisGeving.length}}
           <li>De afwezigheid met kennisgeving van:
-            <ul>
+            <ul class="bullet-list">
               {{#each afwezigenMetKennisGeving as |verkozene|}}
                 <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
               {{/each}}
@@ -34,7 +34,7 @@
         {{/if}}
         {{#if afwezigen.length}}
           <li>De afwezigheid zonder kennisgeving van volgende verkozenen:
-            <ul>
+            <ul class="bullet-list">
               {{#each afwezigen as |verkozene|}}
                 <li><span property="ext:bekrachtigdAfwezigheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
               {{/each}}
@@ -78,7 +78,7 @@
 
   {{#mandataris-aanstelling-tabel/output-article}}
     <span property="eli:number">Artikel 3</span>
-    <div property="prov:value"> Akte te nemen van de eedaflegging in handen van de voorzitter:
+    <div property="prov:value"> Akte te nemen van de eedaflegging van
       <table class="data-table data-table--lined data-table--zebra data-table--tight">
         <thead>
           <tr>
@@ -111,6 +111,8 @@
           {{/each}}
         </tbody>
       </table>
+      <br>
+      en van de eedaflegging in handen van <span class="mark-highlight-manual">Voer naam burgemeester of oudste gemeenteraadslid in</span>.
     </div>
   {{/mandataris-aanstelling-tabel/output-article}}
 

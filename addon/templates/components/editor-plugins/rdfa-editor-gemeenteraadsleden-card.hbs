@@ -56,14 +56,14 @@
 
 {{#if popup}}
   {{#wu-modal
-     title="Installatie gemeenteraadsleden"
-     dialog-class="modal-dialog--wide modal-dialog--sectioned"
-     dialog-content-class="modal-dialog__content--sectioned"
-     onClose=(action 'togglePopup')
-     as |m|}}
+		title="Installatie gemeenteraadsleden"
+		dialog-class="modal-dialog--wide modal-dialog--sectioned modal-dialog--wizard"
+		dialog-content-class="modal-dialog__content--sectioned"
+		onClose=(action 'togglePopup')
+		as |m|}}
     {{#wu-wizard isNumeric=true currentStep=currentStep as |wizard|}}
       {{#wizard.step as |step|}}
-        {{step.header title='samenstelling van de gemeenteraad'}}
+        {{step.header title='Samenstelling van de gemeenteraad'}}
         {{#step.pane as |pane|}}
           {{#m.content sectioned=true}}
             {{mandataris-aanstelling-tabel/samenstelling
@@ -74,9 +74,10 @@
             }}
           {{/m.content}}
           {{#m.buttons as |b|}}
-            {{wizard.next}}
-            {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
-            {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+	          {{#wu-button-group}}
+	            {{wizard.next}}
+	            {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+	          {{/wu-button-group}}
           {{/m.buttons}}
         {{/step.pane}}
       {{/wizard.step}}
@@ -91,7 +92,7 @@
             {{/m.buttons}}
           {{/step.pane}}
         {{else}}
-          {{step.header title='rangorde van de gemeenteraadsleden'}}
+          {{step.header title='Rangorde van de gemeenteraadsleden'}}
           {{#step.pane}}
             {{#m.content sectioned=true}}
               {{#editor-plugins/mandataris-aanstelling-tabel
@@ -113,9 +114,11 @@
               {{/editor-plugins/mandataris-aanstelling-tabel}}
             {{/m.content}}
             {{#m.buttons as |b|}}
-              {{wizard.previous}}
-              {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
-              {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+	            {{#wu-button-group}}
+	              {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
+	              {{wizard.previous}}
+	              {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+	             {{/wu-button-group}}
             {{/m.buttons}}
           {{/step.pane}}
         {{/if}}

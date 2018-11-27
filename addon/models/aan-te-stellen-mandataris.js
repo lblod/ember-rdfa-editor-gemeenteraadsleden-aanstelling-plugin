@@ -31,9 +31,11 @@ export default EmberObject.extend({
     var ancieniteit = 0;
     for (const mandaat of this.oudeMandaten) {
       if (mandaat.start && mandaat.start instanceof Date && mandaat.einde && mandaat.einde instanceof Date) {
-        var d2Y = mandaat.einde.getFullYear();
+        const nextDay = new Date(mandaat.einde);
+        nextDay.setDate(mandaat.einde.getDate() + 1);
+        var d2Y = nextDay.getFullYear();
         var d1Y = mandaat.start.getFullYear();
-        var d2M = mandaat.einde.getMonth();
+        var d2M = nextDay.getMonth();
         var d1M = mandaat.start.getMonth();
         ancieniteit = ancieniteit + (d2M - d1M + 12*(d2Y - d1Y));
       }

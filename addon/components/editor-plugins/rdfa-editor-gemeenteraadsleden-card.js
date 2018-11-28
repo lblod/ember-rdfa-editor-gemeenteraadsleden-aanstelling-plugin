@@ -133,7 +133,7 @@ export default Component.extend({
         resultaat: persoon.verkiezingsresultaten.firstObject,
         lijst: persoon.isKandidaatVoor.firstObject
       });
-      this.mandatarissen.pushObject(opvolger);
+      this.mandatarissen.insertAt(0,opvolger);
     },
     setRecord(record) {
       this.set('record', record);

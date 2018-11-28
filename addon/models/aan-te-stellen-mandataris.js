@@ -1,6 +1,7 @@
 import { A } from '@ember/array';
 import EmberObject from '@ember/object';
 import { computed } from '@ember/object';
+import { equal } from '@ember/object/computed';
 import uuid from 'uuid/v4';
 
 const defaultStatus = 'opname mandaat';
@@ -8,6 +9,8 @@ const afstandMandaat = 'afstand mandaat';
 const afwezigMetKennisname = 'afwezig met kennisname';
 const afwezigZonderKennisname = 'afwezig zonder kennisname';
 const onverenigbaarheid = 'situatie van onverenigbaarheid';
+const verhinderd = 'verhinderd';
+const waarnemend = 'waarnemend';
 
 export default EmberObject.extend({
   uri: null,
@@ -27,6 +30,9 @@ export default EmberObject.extend({
     persoon: "http://data.vlaanderen.be/ns/mandaat#isBestuurlijkeAliasVan",
     oudeMandaten: "http://mu.semte.ch/vocabularies/ext/oudMandaat"
   },
+  isVerhinderd: equal('status', verhinderd ),
+  isEffectief: equal('status', defaultStatus),
+  isWaarnemend: equal('status', waarnemend),
   ancieniteit: computed('oudeMandaten.[].{start,einde}', function () {
     var ancieniteit = 0;
     for (const mandaat of this.oudeMandaten) {
@@ -52,4 +58,12 @@ export default EmberObject.extend({
   }
 });
 
-export {defaultStatus, afstandMandaat, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid};
+export {
+  defaultStatus,
+  afstandMandaat,
+  afwezigZonderKennisname,
+  afwezigMetKennisname,
+  onverenigbaarheid,
+  verhinderd,
+  waarnemend
+};

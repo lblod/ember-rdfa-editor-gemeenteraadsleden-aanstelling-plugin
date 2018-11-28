@@ -8,8 +8,8 @@
             <ul class="bullet-list">
               {{#each afstandenVanMandaat as |verkozene|}}
                 <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
-          {{/each}}
-          </ul>
+              {{/each}}
+            </ul>
           </li>
         {{else}}
           <li>Het ontbreken van afstanden van mandaat;</li>
@@ -56,7 +56,7 @@
           </tr>
         </thead>
         <tbody>
-          {{#each verkozenen as |verkozene|}}
+          {{#each mandatarissenVoorGeloofsbrieven as |verkozene|}}
             <tr>
               <td>
                 {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
@@ -88,7 +88,7 @@
           </tr>
         </thead>
         <tbody>
-          {{#each verkozenen as |verkozene|}}
+          {{#each aangesteldeMandatarissen as |verkozene|}}
             <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
               <td>
                 {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
@@ -106,6 +106,21 @@
                 <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
                   {{moment-format verkozene.start 'YYYY-MM-DD'}}
                 </span>
+                {{#if verkozene.isVerhinderd}}
+                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/c301248f-0199-45ca-b3e5-4c596731d5fe">
+                    ( Verhinderd )
+                  </span>
+                {{/if}}
+                {{#if verkozene.isWaarnemend}}
+                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/e1ca6edd-55e1-4288-92a5-53f4cf71946a">
+                    ( Waarnemend )
+                  </span>
+                {{/if}}
+                {{#if verkozene.isEffectief}}
+                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
+                    ( Effectief )
+                  </span>
+                {{/if}}
               </td>
             </tr>
           {{/each}}
@@ -114,10 +129,81 @@
       <br>
     </div>
   {{/mandataris-aanstelling-tabel/output-article}}
-
   {{#mandataris-aanstelling-tabel/output-article}}
     <span property="eli:number">Artikel 4</span>
-    <span property="prov:value"> De rangorde van de gemeenteraadsleden als volgt vast te stellen:<br>
+    <div property="prov:value">
+      {{#if verhinderdeMandatarissen.length}}
+        Akte te nemen van de verhindering van volgende raadsleden:
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th>Officiële Voornaam &amp; Familienaam</th>
+              <th>Lijst</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each verhinderdeMandatarissen as |verkozene|}}
+              <tr>
+                <td>
+                  {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
+                </td>
+                <td>
+                  {{#if verkozene.lijst}}
+                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                      {{ctx.prop p="lijstnaam"}}
+                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                    {{/with-rdfa-resource}}
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      {{else}}
+        <p>Akte te nemen van het gegeven dat er geen raadsleden verhinderd zijn.</p>
+      {{/if}}
+    </div>
+  {{/mandataris-aanstelling-tabel/output-article}}
+  {{#if verhinderdeMandatarissen.length}}
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 5</span>
+      <div property="prov:value"> De geloofsbrieven van volgende opvolgers die de verhinderde raadsleden vervangen voor de duur van de verhindering, goed te keuren:
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th>Officiële Voornaam &amp; Familienaam</th>
+              <th>Lijst</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each waarnemendeMandatarissen as |verkozene|}}
+              <tr>
+                <td>
+                  {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
+                </td>
+                <td>
+                  {{#if verkozene.lijst}}
+                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                      {{ctx.prop p="lijstnaam"}}
+                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                    {{/with-rdfa-resource}}
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+
+    {{/mandataris-aanstelling-tabel/output-article}}
+  {{/if}}
+  {{#mandataris-aanstelling-tabel/output-article}}
+    {{#if verhinderdeMandatarissen.length}}
+      <span property="eli:number">Artikel 6</span>
+    {{else}}
+      <span property="eli:number">Artikel 5</span>
+    {{/if}}
+    <div property="prov:value"> De rangorde van de gemeenteraadsleden als volgt vast te stellen:<br>
       <table class="data-table data-table--lined data-table--zebra data-table--tight">
         <thead>
           <tr>
@@ -126,7 +212,7 @@
           </tr>
         </thead>
         <tbody>
-          {{#each verkozenen as |verkozene|}}
+          {{#each zetelendeMandatarissen as |verkozene|}}
             <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
               <td>
                 {{rdfa/ctx-prop resource=verkozene p="rangorde"}}
@@ -166,6 +252,6 @@
           {{/each}}
         </tbody>
       </table>
-    </span>
+    </div>
   {{/mandataris-aanstelling-tabel/output-article}}
 </ul>

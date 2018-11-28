@@ -1,9 +1,9 @@
-import { reads, filterBy, bool } from '@ember/object/computed';
+import { reads, filter, filterBy, bool } from '@ember/object/computed';
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
-import { defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../../models/aan-te-stellen-mandataris';
+import { waarnemend, verhinderd, defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../../models/aan-te-stellen-mandataris';
 import layout from '../../templates/components/editor-plugins/rdfa-editor-gemeenteraadsleden-card';
 import { task } from 'ember-concurrency';
 import { A } from '@ember/array';
@@ -54,11 +54,22 @@ export default Component.extend({
   bestuursorgaan: reads('aanstelling.bestuursorgaan'),
   startDate: reads('aanstelling.startDate'),
   bestuursfunctie: reads('info.bestuursfunctie'),
-  opgenomenMandaten: filterBy('mandatarissen','status', defaultStatus),
+  mandatarissenVoorGeloofsbrieven: filter('mandatarissen', function(mandataris) {
+    return [defaultStatus, verhinderd].includes(mandataris.status);
+  }),
+  aangesteldeMandatarissen: filter('mandatarissen', function(mandataris) {
+    return [verhinderd, waarnemend, defaultStatus].includes(mandataris.status);
+  }),
+  zetelendeMandatarissen: filter('mandatarissen', function(mandataris) {
+    return [waarnemend, defaultStatus].includes(mandataris.status);
+  }),
+  waarnemendeMandatarissen: filterBy('mandatarissen', 'status', waarnemend),
+  verhinderdeMandatarissen: filterBy('mandatarissen', 'status', verhinderd),
   afstandenVanMandaat: filterBy('mandatarissen', 'status', afstandMandaat),
   onverenigbaarheden: filterBy('mandatarissen', 'status', onverenigbaarheid),
   afwezigenMetKennisGeving: filterBy('mandatarissen', 'status', afwezigMetKennisname),
   afwezigen: filterBy('mandatarissen', 'status', afwezigZonderKennisname),
+  verhinderd: filterBy('mandatarissen', 'status', verhinderd),
   outputId: computed('id', function() { return `output-mandataris-tabel-${this.id}`;}),
   async didReceiveAttrs() {
     this.fetchResources.perform();

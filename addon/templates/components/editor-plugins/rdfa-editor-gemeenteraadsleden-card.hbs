@@ -56,11 +56,11 @@
 
 {{#if popup}}
   {{#wu-modal
-		title="Installatie gemeenteraadsleden"
-		dialog-class="modal-dialog--wide modal-dialog--sectioned modal-dialog--wizard"
-		dialog-content-class="modal-dialog__content--sectioned"
-		onClose=(action 'togglePopup')
-		as |m|}}
+		 title="Installatie gemeenteraadsleden"
+		 dialog-class="modal-dialog--wide modal-dialog--sectioned modal-dialog--wizard"
+		 dialog-content-class="modal-dialog__content--sectioned"
+		 onClose=(action 'togglePopup')
+		 as |m|}}
     {{#wu-wizard isNumeric=true currentStep=currentStep as |wizard|}}
       {{#wizard.step as |step|}}
         {{step.header title='Samenstelling van de gemeenteraad'}}
@@ -98,7 +98,7 @@
               {{#editor-plugins/mandataris-aanstelling-tabel
                  bestuursorgaan=bestuursorgaan
                  defaultMandaat=mandaat
-                 mandatarissen=opgenomenMandaten
+                 mandatarissen=zetelendeMandatarissen
                  startDate=startDate
                  setRecord=(action 'setRecord')
                  as |table|}}
@@ -110,6 +110,11 @@
                   onverenigbaarheden=onverenigbaarheden
                   afwezigenMetKennisGeving=afwezigenMetKennisGeving
                   afwezigen=afwezigen
+                  zetelendeMandatarissen=zetelendeMandatarissen
+                  verhinderdeMandatarissen=verhinderdeMandatarissen
+                  mandatarissenVoorGeloofsbrieven=mandatarissenVoorGeloofsbrieven
+                  aangesteldeMandatarissen=aangesteldeMandatarissen
+                  waarnemendeMandatarissen=waarnemendeMandatarissen
                 }}
               {{/editor-plugins/mandataris-aanstelling-tabel}}
             {{/m.content}}

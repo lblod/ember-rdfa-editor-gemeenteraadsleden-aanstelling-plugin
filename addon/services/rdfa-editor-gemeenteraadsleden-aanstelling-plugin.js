@@ -5,7 +5,7 @@ import { inject as service } from '@ember/service';
 import RdfaContextScanner from '@lblod/ember-rdfa-editor/utils/rdfa-context-scanner';
 import AanTeStellenMandataris from '../models/aan-te-stellen-mandataris';
 import { A } from '@ember/array';
-import { defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../models/aan-te-stellen-mandataris';
+import { waarnemend, verhinderd, defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../models/aan-te-stellen-mandataris';
 
 const textToMatch = "beheer aanstelling gemeenteraadsleden.";
 const oudMandaatPredicate = 'http://mu.semte.ch/vocabularies/ext/oudMandaat';
@@ -14,7 +14,8 @@ const onverenigbaarheidPredicate = 'http://mu.semte.ch/vocabularies/ext/bekracht
 const afwezigMetKennisnamePredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdAfwezigheidMetKennisGeving';
 const afwezigZonderKennisnamePredicate = 'http://mu.semte.ch/vocabularies/ext/bekrachtigdAfwezigheid';
 const bestuursfunctie = 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000011'; // TODO: hardcoded for now
-
+const waarnemendURI = 'http://data.vlaanderen.be/id/concept/MandatarisStatusCode/e1ca6edd-55e1-4288-92a5-53f4cf71946a';
+const verhinderdURI = 'http://data.vlaanderen.be/id/concept/MandatarisStatusCode/c301248f-0199-45ca-b3e5-4c596731d5fe';
 /**
  * Service responsible for correct annotation of dates
  *
@@ -90,6 +91,15 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     setPropIfTripleFound(triples, mandataris, 'start');
     setPropIfTripleFound(triples, mandataris, 'einde');
     mandataris.set('mandaat', this.mandaat);
+    const statusURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.status);
+    if (statusURI) {
+      // TODO: do this properly
+      if (statusURI.object === waarnemendURI)
+        mandataris.set('status', waarnemend);
+      if (statusURI.object === verhinderdURI)
+        mandataris.set('status', verhinderd);
+    }
+
     const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
     if (persoonURI) {
       const persoon = await this.store.query('persoon', this.personQueryFilter([persoonURI.object]));

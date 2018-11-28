@@ -28,7 +28,8 @@ export default EmberObject.extend({
     einde: "http://data.vlaanderen.be/ns/mandaat#einde",
     mandaat: "http://www.w3.org/ns/org#holds",
     persoon: "http://data.vlaanderen.be/ns/mandaat#isBestuurlijkeAliasVan",
-    oudeMandaten: "http://mu.semte.ch/vocabularies/ext/oudMandaat"
+    oudeMandaten: "http://mu.semte.ch/vocabularies/ext/oudMandaat",
+    status: "http://data.vlaanderen.be/ns/mandaat#status"
   },
   isVerhinderd: equal('status', verhinderd ),
   isEffectief: equal('status', defaultStatus),

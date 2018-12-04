@@ -98,25 +98,25 @@ export default Component.extend({
             'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
           }
         },
-        include: 'verkiezingsresultaten,is-kandidaat-voor',
+        include: 'verkiezingsresultaten.is-resultaat-voor.rechtstreekse-verkiezing.stelt-samen,is-kandidaat-voor.rechtstreekse-verkiezing.stelt-samen',
         page: {
           number: 0,
           size: 100
         }
       });
     const aantestellen = A();
-    verkozenen.sortBy('verkiezingsresultaten.firstObject.aantalNaamstemmen').reverse().forEach( (verkozene) =>  {
+    verkozenen.forEach( (verkozene) =>  {
       aantestellen.pushObject(AanTeStellenMandataris.create({
         persoon: verkozene,
         start: this.startDate,
         einde: this.bestuursorgaan.bindingEinde,
         status: defaultStatus,
         mandaat: this.mandaat,
-        resultaat: verkozene.verkiezingsresultaten.firstObject,
-        lijst: verkozene.isKandidaatVoor.firstObject
+        resultaat: verkozene.verkiezingsresultaten.find((r) => r.get('isResultaatVoor.rechtstreekseVerkiezing.steltSamen.uri') === this.bestuursorgaan),
+        lijst: verkozene.isKandidaatVoor.find((r) => r.get('rechtstreekseVerkiezing.steltSamen.uri') === this.bestuursorgaan )
       }));
     });
-      this.set('mandatarissen', aantestellen);
+      this.set('mandatarissen', aantestellen.sortBy('resultaat.aantalNaamstemmen').reverse());
     }
   }),
   actions: {

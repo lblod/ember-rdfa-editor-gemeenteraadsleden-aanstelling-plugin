@@ -6,8 +6,8 @@ import uuid from 'uuid/v4';
 
 const defaultStatus = 'opname mandaat';
 const afstandMandaat = 'afstand mandaat';
-const afwezigMetKennisname = 'afwezig met kennisname';
-const afwezigZonderKennisname = 'afwezig zonder kennisname';
+const afwezigMetKennisname = 'afwezig met kennisgeving';
+const afwezigZonderKennisname = 'afwezig zonder kennisgeving';
 const onverenigbaarheid = 'situatie van onverenigbaarheid';
 const verhinderd = 'verhinderd';
 const waarnemend = 'waarnemend';

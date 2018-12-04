@@ -1,7 +1,7 @@
 <ul class="bullet-list"  property="ext:mandatarisTabelInput">
   {{#mandataris-aanstelling-tabel/output-article}}
     <span property="eli:number">Artikel 1</span>
-    <div property="prov:value"> Kennis te nemen van
+    <div property="prov:value"> Akte te nemen van
       <ul class="bullet-list">
         {{#if afstandenVanMandaat.length}}
           <li>De afstand van mandaat van volgende verkozenen:
@@ -104,7 +104,7 @@
               </td>
               <td>
                 <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
-                  {{moment-format verkozene.start 'YYYY-MM-DD'}}
+                  {{moment-format verkozene.start 'LL'}}
                 </span>
                 {{#if verkozene.isVerhinderd}}
                   <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/c301248f-0199-45ca-b3e5-4c596731d5fe">
@@ -164,7 +164,8 @@
       {{/if}}
     </div>
   {{/mandataris-aanstelling-tabel/output-article}}
-  {{#if verhinderdeMandatarissen.length}}
+
+  {{#if waarnemendeMandatarissen.length}}
     {{#mandataris-aanstelling-tabel/output-article}}
       <span property="eli:number">Artikel 5</span>
       <div property="prov:value"> De geloofsbrieven van volgende opvolgers die de verhinderde raadsleden vervangen voor de duur van de verhindering, goed te keuren:
@@ -194,11 +195,11 @@
           </tbody>
         </table>
       </div>
-
     {{/mandataris-aanstelling-tabel/output-article}}
   {{/if}}
+
   {{#mandataris-aanstelling-tabel/output-article}}
-    {{#if verhinderdeMandatarissen.length}}
+    {{#if waarnemendeMandatarissen.length}}
       <span property="eli:number">Artikel 6</span>
     {{else}}
       <span property="eli:number">Artikel 5</span>
@@ -226,12 +227,12 @@
                 {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
                   {{#if model.einde}}
                     <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>
-                      {{moment-format model.einde 'YYYY-MM-DD'}}
+                      {{moment-format model.einde 'LL'}}
                     </span>
                   {{/if}}
                   {{#if model.start}}
                     <span property="mandaat:start" datatype="xsd:date" content={{moment-format model.start 'YYYY-MM-DD'}}>
-                      {{moment-format model.start 'YYYY-MM-DD'}}
+                      {{moment-format model.start 'LL'}}
                     </span>
                   {{/if}}
                 {{/rdfa/ctx-each-resource}}

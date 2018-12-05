@@ -90,30 +90,28 @@ export default Component.extend({
       this.set('mandatarissen', yield this.info.data);
     }
     else {
-      const verkozenen = yield this.store.query('persoon', {
+      const verkozenen = yield this.store.query('verkiezingsresultaat', {
         filter: {
-          'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
-          'verkiezingsresultaten': {
-            'gevolg': { ':uri:': 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f'},
-            'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
+          'gevolg': { ':uri:': 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f'},
+          'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}
           }
         },
-        include: 'verkiezingsresultaten.is-resultaat-voor.rechtstreekse-verkiezing.stelt-samen,is-kandidaat-voor.rechtstreekse-verkiezing.stelt-samen',
+        include: 'is-resultaat-voor,is-resultaat-van',
         page: {
           number: 0,
           size: 100
         }
       });
     const aantestellen = A();
-    verkozenen.forEach( (verkozene) =>  {
+    verkozenen.forEach( (resultaat) =>  {
       aantestellen.pushObject(AanTeStellenMandataris.create({
-        persoon: verkozene,
+        persoon: resultaat.isResultaatVan,
         start: this.startDate,
         einde: this.bestuursorgaan.bindingEinde,
         status: defaultStatus,
         mandaat: this.mandaat,
-        resultaat: verkozene.verkiezingsresultaten.find((r) => r.get('isResultaatVoor.rechtstreekseVerkiezing.steltSamen.uri') === this.bestuursorgaan),
-        lijst: verkozene.isKandidaatVoor.find((r) => r.get('rechtstreekseVerkiezing.steltSamen.uri') === this.bestuursorgaan )
+        resultaat: resultaat,
+        lijst: resultaat.isResultaatVoor
       }));
     });
       this.set('mandatarissen', aantestellen.sortBy('resultaat.aantalNaamstemmen').reverse());

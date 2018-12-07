@@ -11,7 +11,7 @@ const afwezigZonderKennisname = 'afwezig zonder kennisgeving';
 const onverenigbaarheid = 'situatie van onverenigbaarheid';
 const verhinderd = 'verhinderd';
 const waarnemend = 'waarnemend';
-
+const burgemeester = 'benoemd als burgemeester';
 export default EmberObject.extend({
   uri: null,
   rangorde: 0,
@@ -34,6 +34,7 @@ export default EmberObject.extend({
   isVerhinderd: equal('status', verhinderd ),
   isEffectief: equal('status', defaultStatus),
   isWaarnemend: equal('status', waarnemend),
+  isBurgemeester: equal('status', burgemeester),
   ancieniteit: computed('oudeMandaten.[].{start,einde}', function () {
     var ancieniteit = 0;
     for (const mandaat of this.oudeMandaten) {
@@ -66,5 +67,6 @@ export {
   afwezigMetKennisname,
   onverenigbaarheid,
   verhinderd,
-  waarnemend
+  waarnemend,
+  burgemeester
 };

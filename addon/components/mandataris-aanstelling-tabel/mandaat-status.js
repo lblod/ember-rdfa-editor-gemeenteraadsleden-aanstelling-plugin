@@ -1,6 +1,6 @@
 import Component from '@ember/component';
 import layout from '../../templates/components/mandataris-aanstelling-tabel/mandaat-status';
-import { defaultStatus, afstandMandaat, waarnemend, verhinderd, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid } from '../../models/aan-te-stellen-mandataris';
+import { defaultStatus, afstandMandaat, waarnemend, verhinderd, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, burgemeester } from '../../models/aan-te-stellen-mandataris';
 export default Component.extend({
   layout,
   options: [
@@ -10,7 +10,8 @@ export default Component.extend({
     afstandMandaat,
     afwezigMetKennisname,
     afwezigZonderKennisname,
-    onverenigbaarheid
+    onverenigbaarheid,
+    burgemeester
   ],
   actions: {
     select(status) {

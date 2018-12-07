@@ -224,6 +224,15 @@
                 {{/rdfa/ctx-linked-resource}}
               </td>
               <td class="u-hidden">
+                {{#if verkozene.isBurgemeester}}
+                  <span property="ext:isBurgemeester" content="true" datatype="xsd:boolean">burgemeester</span>
+                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
+                    (Effectief)
+                  </span>
+                  <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
+                    {{moment-format verkozene.start 'LL'}}
+                  </span>
+                {{/if}}
                 {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
                   {{#if model.einde}}
                     <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>

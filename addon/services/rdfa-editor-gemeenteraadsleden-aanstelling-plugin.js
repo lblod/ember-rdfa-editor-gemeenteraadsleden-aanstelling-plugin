@@ -5,7 +5,7 @@ import { inject as service } from '@ember/service';
 import RdfaContextScanner from '@lblod/ember-rdfa-editor/utils/rdfa-context-scanner';
 import AanTeStellenMandataris from '../models/aan-te-stellen-mandataris';
 import { A } from '@ember/array';
-import { waarnemend, verhinderd, defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../models/aan-te-stellen-mandataris';
+import { waarnemend, verhinderd, defaultStatus, afwezigZonderKennisname, burgemeester, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../models/aan-te-stellen-mandataris';
 
 const textToMatch = "beheer aanstelling gemeenteraadsleden.";
 const oudMandaatPredicate = 'http://mu.semte.ch/vocabularies/ext/oudMandaat';
@@ -99,7 +99,10 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
       if (statusURI.object === verhinderdURI)
         mandataris.set('status', verhinderd);
     }
-
+    const isBurgemeester = triples.any((t) => t.predicate === 'http://mu.semte.ch/vocabularies/ext/isBurgemeester');
+    if (isBurgemeester) {
+      mandataris.set('status', burgemeester);
+    }
     const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
     if (persoonURI) {
       const persoon = await this.store.query('persoon', this.personQueryFilter([persoonURI.object]));
@@ -196,6 +199,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
 
   /**
    * @private
+   * does not actually extract tables anymore, but rather a node with the proper predicate
    */
   extractTables(contexts) {
     const relevantContexts = contexts.filter((context) => context.context.find((triple) => triple.predicate === 'http://mu.semte.ch/vocabularies/ext/mandatarisTabelInput'));

@@ -3,7 +3,7 @@ import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
 import AanTeStellenMandataris from '../../models/aan-te-stellen-mandataris';
-import { waarnemend, verhinderd, defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, afstandMandaat } from '../../models/aan-te-stellen-mandataris';
+import { waarnemend, verhinderd, defaultStatus, afwezigZonderKennisname, afwezigMetKennisname, burgemeester, onverenigbaarheid, afstandMandaat } from '../../models/aan-te-stellen-mandataris';
 import layout from '../../templates/components/editor-plugins/rdfa-editor-gemeenteraadsleden-card';
 import { task } from 'ember-concurrency';
 import { A } from '@ember/array';
@@ -61,7 +61,7 @@ export default Component.extend({
     return [verhinderd, waarnemend, defaultStatus].includes(mandataris.status);
   }),
   zetelendeMandatarissen: filter('mandatarissen', function(mandataris) {
-    return [waarnemend, defaultStatus].includes(mandataris.status);
+    return [waarnemend, defaultStatus, burgemeester].includes(mandataris.status);
   }),
   waarnemendeMandatarissen: filterBy('mandatarissen', 'status', waarnemend),
   verhinderdeMandatarissen: filterBy('mandatarissen', 'status', verhinderd),

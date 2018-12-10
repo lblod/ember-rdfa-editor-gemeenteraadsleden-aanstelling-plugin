@@ -33,13 +33,12 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
   personQueryFilter(uris) {
     return {
       filter: {
-        ':uri:': uris.join(','),
-        'is-kandidaat-voor': { 'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}},
-        'verkiezingsresultaten': {
-          'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
-        }
+        'is-resultaat-van': {
+          ':uri:': uris.join(',')
+        },
+        'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
       },
-      include: 'verkiezingsresultaten,is-kandidaat-voor'
+      include: 'is-resultaat-van,is-resultaat-voor'
     };
   },
 
@@ -105,22 +104,22 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     }
     const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
     if (persoonURI) {
-      const persoon = await this.store.query('persoon', this.personQueryFilter([persoonURI.object]));
-      mandataris.set('persoon', persoon.get('firstObject'));
-      mandataris.set('resultaat', mandataris.persoon.verkiezingsresultaten.firstObject);
-      mandataris.set('lijst', mandataris.persoon.isKandidaatVoor.firstObject);
+      const resultaat = await this.store.query('verkiezingsresultaat', this.personQueryFilter([persoonURI.object]));
+      mandataris.set('resultaat', resultaat.get('firstObject'));
+      mandataris.set('persoon', resultaat.get('firstObject.isResultaatVan'));
+      mandataris.set('lijst', resultaat.get('firstObject.isResultaatVoor'));
     }
     return mandataris;
   },
   async buildNietAangesteldeMandataris(triples, predicate, status) {
     const uris = triples.filter((t) => t.predicate === predicate).map((t) => t.object);
     if (uris.length > 0) {
-      const personen = await this.store.query('persoon', this.personQueryFilter(uris));
-      return personen.map( (persoon) => AanTeStellenMandataris.create({
-        persoon,
+      const resultaten = await this.store.query('verkiezingsresultaat', this.personQueryFilter(uris));
+      return resultaten.map( (resultaat) => AanTeStellenMandataris.create({
+        resultaat,
+        persoon: resultaat.get('isResultaatVan'),
         status: status,
-        lijst:persoon.isKandidaatVoor.firstObject,  // this works because of the filter
-        resultaat: persoon.verkiezingsresultaten.firstObject // this works because of the filter
+        lijst: resultaat.get('isResultaatVoor')
       }));
     }
     else

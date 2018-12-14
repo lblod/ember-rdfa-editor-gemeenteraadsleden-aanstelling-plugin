@@ -146,6 +146,9 @@ export default Component.extend({
     },
     setRecord(record) {
       this.set('record', record);
+    },
+    toggleNieuweStijl(){
+      this.toggleProperty('nieuweStijl');
     }
   }
 });

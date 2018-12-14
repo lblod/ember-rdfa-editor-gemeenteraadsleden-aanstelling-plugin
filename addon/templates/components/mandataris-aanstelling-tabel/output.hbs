@@ -1,174 +1,56 @@
-<ul class="bullet-list"  property="ext:mandatarisTabelInput">
-  {{#mandataris-aanstelling-tabel/output-article}}
-    <span property="eli:number">Artikel 1</span>
-    <div property="prov:value"> Akte te nemen van
-      <ul class="bullet-list">
-        {{#if afstandenVanMandaat.length}}
-          <li>De afstand van mandaat van volgende verkozenen:
-            <ul class="bullet-list">
-              {{#each afstandenVanMandaat as |verkozene|}}
-                <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
-              {{/each}}
-            </ul>
-          </li>
-        {{else}}
-          <li>Het ontbreken van afstanden van mandaat;</li>
-        {{/if}}
-        {{#if onverenigbaarheden.length}}
-          <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozenen:
-            <ul class="bullet-list">
-              {{#each onverenigbaarheden as |verkozene|}}
-                <li><span property="ext:bekrachtigdOnverenigbaarheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
-              {{/each}}
-            </ul>
-          </li>
-        {{/if}}
-        {{#if afwezigenMetKennisGeving.length}}
-          <li>De afwezigheid met kennisgeving van:
-            <ul class="bullet-list">
-              {{#each afwezigenMetKennisGeving as |verkozene|}}
-                <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
-              {{/each}}
-            </ul>
-          </li>
-        {{/if}}
-        {{#if afwezigen.length}}
-          <li>De afwezigheid zonder kennisgeving van volgende verkozenen:
-            <ul class="bullet-list">
-              {{#each afwezigen as |verkozene|}}
-                <li><span property="ext:bekrachtigdAfwezigheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
-              {{/each}}
-            </ul>
-          </li>
-        {{/if}}
-      </ul>
-    </div>
-  {{/mandataris-aanstelling-tabel/output-article}}
-
-  {{#mandataris-aanstelling-tabel/output-article}}
-    <span property="eli:number">Artikel 2</span>
-    <div property="prov:value"> De geloofsbrieven goed te keuren van:
-      <table class="data-table data-table--lined data-table--zebra data-table--tight">
-        <thead>
-          <tr>
-            <th>Officiële naam</th>
-            <th>Lijst</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each mandatarissenVoorGeloofsbrieven as |verkozene|}}
-            <tr>
-              <td>
-                {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
-              </td>
-              <td>
-                {{#if verkozene.lijst}}
-                  {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
-                    {{ctx.prop p="lijstnaam"}}
-                    <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
-                  {{/with-rdfa-resource}}
-                {{/if}}
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-  {{/mandataris-aanstelling-tabel/output-article}}
-
-  {{#mandataris-aanstelling-tabel/output-article}}
-    <span property="eli:number">Artikel 3</span>
-    <div property="prov:value"> Akte te nemen van de eedaflegging van in handen van de voorzitter,
-      <table class="data-table data-table--lined data-table--zebra data-table--tight">
-        <thead>
-          <tr>
-            <th>Officiële naam</th>
-            <th>Mandaat</th>
-            <th>Begin mandaat</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each aangesteldeMandatarissen as |verkozene|}}
-            <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
-              <td>
-                {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
-                  {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
-                {{/rdfa/ctx-linked-resource}}
-              </td>
-              <td>
-                {{#rdfa/ctx-linked-resource resource=verkozene p="mandaat" as |model mandaat|}}
-                  <span property="org:role" resource="{{model.bestuursfunctie.uri}}">
-                    <span property="skos:prefLabel">{{model.bestuursfunctie.label}}</span>
-                  </span>
-                {{/rdfa/ctx-linked-resource}}
-              </td>
-              <td>
-                <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
-                  {{moment-format verkozene.start 'LL'}}
-                </span>
-                {{#if verkozene.isVerhinderd}}
-                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/c301248f-0199-45ca-b3e5-4c596731d5fe">
-                    (Verhinderd)
-                  </span>
-                {{/if}}
-                {{#if verkozene.isWaarnemend}}
-                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/e1ca6edd-55e1-4288-92a5-53f4cf71946a">
-                    (Waarnemend)
-                  </span>
-                {{/if}}
-                {{#if verkozene.isEffectief}}
-                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
-                    (Effectief)
-                  </span>
-                {{/if}}
-              </td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
-      <br>
-    </div>
-  {{/mandataris-aanstelling-tabel/output-article}}
-  {{#mandataris-aanstelling-tabel/output-article}}
-    <span property="eli:number">Artikel 4</span>
-    <div property="prov:value">
-      {{#if verhinderdeMandatarissen.length}}
-        Akte te nemen van de verhindering van volgende raadsleden:
-        <table class="data-table data-table--lined data-table--zebra data-table--tight">
-          <thead>
-            <tr>
-              <th>Officiële naam</th>
-              <th>Lijst</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each verhinderdeMandatarissen as |verkozene|}}
-              <tr>
-                <td>
-                  {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
-                </td>
-                <td>
-                  {{#if verkozene.lijst}}
-                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
-                      {{ctx.prop p="lijstnaam"}}
-                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
-                    {{/with-rdfa-resource}}
-                  {{/if}}
-                </td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      {{else}}
-        <p>Akte te nemen van het gegeven dat er geen raadsleden verhinderd zijn.</p>
-      {{/if}}
-    </div>
-  {{/mandataris-aanstelling-tabel/output-article}}
-
-  {{#if waarnemendeMandatarissen.length}}
+{{#if nieuweStijl}}
+  {{!-- ********************************  nieuwe stijl ******************************** --}}
+  
+  <ul class="bullet-list"  property="ext:mandatarisTabelInput">
     {{#mandataris-aanstelling-tabel/output-article}}
-      <span property="eli:number">Artikel 5</span>
-      <div property="prov:value"> De geloofsbrieven van volgende opvolgers die de verhinderde raadsleden vervangen voor de duur van de verhindering, goed te keuren:
+      <span property="eli:number">Artikel 1</span>
+      <div property="prov:value"> De gemeenteraad neemt akte van:
+        <ul class="bullet-list">
+          {{#if afstandenVanMandaat.length}}
+            <li>De afstand van mandaat van volgende verkozenen:
+              <ul class="bullet-list">
+                {{#each afstandenVanMandaat as |verkozene|}}
+                  <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{else}}
+            <li>Het ontbreken van afstanden van mandaat;</li>
+          {{/if}}
+          {{#if onverenigbaarheden.length}}
+            <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozenen:
+              <ul class="bullet-list">
+                {{#each onverenigbaarheden as |verkozene|}}
+                  <li><span property="ext:bekrachtigdOnverenigbaarheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+          {{#if afwezigenMetKennisGeving.length}}
+            <li>De afwezigheid met kennisgeving van:
+              <ul class="bullet-list">
+                {{#each afwezigenMetKennisGeving as |verkozene|}}
+                  <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+          {{#if afwezigen.length}}
+            <li>De afwezigheid zonder kennisgeving van volgende verkozenen:
+              <ul class="bullet-list">
+                {{#each afwezigen as |verkozene|}}
+                  <li><span property="ext:bekrachtigdAfwezigheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+        </ul>
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 2</span>
+      <div property="prov:value"> De gemeenteraad keurt de geloofsbrieven goed van:
         <table class="data-table data-table--lined data-table--zebra data-table--tight">
           <thead>
             <tr>
@@ -177,7 +59,7 @@
             </tr>
           </thead>
           <tbody>
-            {{#each waarnemendeMandatarissen as |verkozene|}}
+            {{#each mandatarissenVoorGeloofsbrieven as |verkozene|}}
               <tr>
                 <td>
                   {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
@@ -196,72 +78,464 @@
         </table>
       </div>
     {{/mandataris-aanstelling-tabel/output-article}}
-  {{/if}}
 
-  {{#mandataris-aanstelling-tabel/output-article}}
-    {{#if waarnemendeMandatarissen.length}}
-      <span property="eli:number">Artikel 6</span>
-    {{else}}
-      <span property="eli:number">Artikel 5</span>
-    {{/if}}
-    <div property="prov:value"> De rangorde van de gemeenteraadsleden als volgt vast te stellen:<br>
-      <table class="data-table data-table--lined data-table--zebra data-table--tight">
-        <thead>
-          <tr>
-            <th>Rang</th>
-            <th>Officiële naam</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each zetelendeMandatarissen as |verkozene|}}
-            <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
-              <td>
-                {{rdfa/ctx-prop resource=verkozene p="rangorde"}}
-              </td>
-              <td>
-                {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
-                  {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
-                {{/rdfa/ctx-linked-resource}}
-              </td>
-              <td class="u-hidden">
-                {{#if verkozene.isBurgemeester}}
-                  <span property="ext:isBurgemeester" content="true" datatype="xsd:boolean">burgemeester</span>
-                  <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
-                    (Effectief)
-                  </span>
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 3</span>
+      <div property="prov:value"> De gemeenteraad neemt akte van de eedaflegging in handen van de voorzitter van:
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th>Officiële naam</th>
+              <th>Mandaat</th>
+              <th>Begin mandaat</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each aangesteldeMandatarissen as |verkozene|}}
+              <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
+                <td>
+                  {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
+                    {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
+                  {{/rdfa/ctx-linked-resource}}
+                </td>
+                <td>
+                  {{#rdfa/ctx-linked-resource resource=verkozene p="mandaat" as |model mandaat|}}
+                    <span property="org:role" resource="{{model.bestuursfunctie.uri}}">
+                      <span property="skos:prefLabel">{{model.bestuursfunctie.label}}</span>
+                    </span>
+                  {{/rdfa/ctx-linked-resource}}
+                </td>
+                <td>
                   <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
                     {{moment-format verkozene.start 'LL'}}
                   </span>
-                {{/if}}
-                {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
-                  {{#if model.einde}}
-                    <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>
-                      {{moment-format model.einde 'LL'}}
+                  {{#if verkozene.isVerhinderd}}
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/c301248f-0199-45ca-b3e5-4c596731d5fe">
+                      (Verhinderd)
                     </span>
                   {{/if}}
-                  {{#if model.start}}
-                    <span property="mandaat:start" datatype="xsd:date" content={{moment-format model.start 'YYYY-MM-DD'}}>
-                      {{moment-format model.start 'LL'}}
+                  {{#if verkozene.isWaarnemend}}
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/e1ca6edd-55e1-4288-92a5-53f4cf71946a">
+                      (Waarnemend)
                     </span>
                   {{/if}}
-                {{/rdfa/ctx-each-resource}}
-                {{#if verkozene.resultaat}}
-                  {{#with-rdfa-resource resource=verkozene.resultaat as |ctx|}}
-                    {{ctx.prop p="aantalNaamstemmen"}}
-                    <span property="mandaat:isResultaatVan"  resource="{{verkozene.persoon.uri}}"></span>
-                  {{/with-rdfa-resource}}
-                {{/if}}
-                {{#if verkozene.lijst}}
-                  {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
-                    {{ctx.prop p="lijstnaam"}}
-                    <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
-                  {{/with-rdfa-resource}}
-                {{/if}}
-              </td>
+                  {{#if verkozene.isEffectief}}
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
+                      (Effectief)
+                    </span>
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        <br>
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 4</span>
+      <div property="prov:value">
+        {{#if verhinderdeMandatarissen.length}}
+          De gemeenteraad neemt akte van de verhindering van volgende raadsleden:
+          <table class="data-table data-table--lined data-table--zebra data-table--tight">
+            <thead>
+              <tr>
+                <th>Officiële naam</th>
+                <th>Lijst</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each verhinderdeMandatarissen as |verkozene|}}
+                <tr>
+                  <td>
+                    {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
+                  </td>
+                  <td>
+                    {{#if verkozene.lijst}}
+                      {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                        {{ctx.prop p="lijstnaam"}}
+                        <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                      {{/with-rdfa-resource}}
+                    {{/if}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{else}}
+          <p>De gemeenteraad neemt akte van het gegeven dat er geen raadsleden verhinderd zijn.</p>
+        {{/if}}
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+
+    {{#if waarnemendeMandatarissen.length}}
+      {{#mandataris-aanstelling-tabel/output-article}}
+        <span property="eli:number">Artikel 5</span>
+        <div property="prov:value">De gemeenteraad keurt de geloofsbrieven goed van volgende opvolgers die de verhinderde raadsleden vervangen voor de duur van de verhindering:
+          <table class="data-table data-table--lined data-table--zebra data-table--tight">
+            <thead>
+              <tr>
+                <th>Officiële naam</th>
+                <th>Lijst</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each waarnemendeMandatarissen as |verkozene|}}
+                <tr>
+                  <td>
+                    {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
+                  </td>
+                  <td>
+                    {{#if verkozene.lijst}}
+                      {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                        {{ctx.prop p="lijstnaam"}}
+                        <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                      {{/with-rdfa-resource}}
+                    {{/if}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{/mandataris-aanstelling-tabel/output-article}}
+    {{/if}}
+
+    {{#mandataris-aanstelling-tabel/output-article}}
+      {{#if waarnemendeMandatarissen.length}}
+        <span property="eli:number">Artikel 6</span>
+      {{else}}
+        <span property="eli:number">Artikel 5</span>
+      {{/if}}
+      <div property="prov:value"> De gemeenteraad stelt de rangorde van de gemeenteraadsleden als volgt vast:<br>
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th>Rang</th>
+              <th>Officiële naam</th>
             </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </div>
-  {{/mandataris-aanstelling-tabel/output-article}}
-</ul>
+          </thead>
+          <tbody>
+            {{#each zetelendeMandatarissen as |verkozene|}}
+              <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
+                <td>
+                  {{rdfa/ctx-prop resource=verkozene p="rangorde"}}
+                </td>
+                <td>
+                  {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
+                    {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
+                  {{/rdfa/ctx-linked-resource}}
+                </td>
+                <td class="u-hidden">
+                  {{#if verkozene.isBurgemeester}}
+                    <span property="ext:isBurgemeester" content="true" datatype="xsd:boolean">burgemeester</span>
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
+                      (Effectief)
+                    </span>
+                    <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
+                      {{moment-format verkozene.start 'LL'}}
+                    </span>
+                  {{/if}}
+                  {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
+                    {{#if model.einde}}
+                      <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>
+                        {{moment-format model.einde 'LL'}}
+                      </span>
+                    {{/if}}
+                    {{#if model.start}}
+                      <span property="mandaat:start" datatype="xsd:date" content={{moment-format model.start 'YYYY-MM-DD'}}>
+                        {{moment-format model.start 'LL'}}
+                      </span>
+                    {{/if}}
+                  {{/rdfa/ctx-each-resource}}
+                  {{#if verkozene.resultaat}}
+                    {{#with-rdfa-resource resource=verkozene.resultaat as |ctx|}}
+                      {{ctx.prop p="aantalNaamstemmen"}}
+                      <span property="mandaat:isResultaatVan"  resource="{{verkozene.persoon.uri}}"></span>
+                    {{/with-rdfa-resource}}
+                  {{/if}}
+                  {{#if verkozene.lijst}}
+                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                      {{ctx.prop p="lijstnaam"}}
+                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                    {{/with-rdfa-resource}}
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+  </ul>
+{{else}}
+  {{!-- ********************************  oude  stijl ******************************** --}}
+  
+  <ul class="bullet-list"  property="ext:mandatarisTabelInput">
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 1</span>
+      <div property="prov:value"> Akte te nemen van
+        <ul class="bullet-list">
+          {{#if afstandenVanMandaat.length}}
+            <li>De afstand van mandaat van volgende verkozenen:
+              <ul class="bullet-list">
+                {{#each afstandenVanMandaat as |verkozene|}}
+                  <li><span property="ext:bekrachtigdAfstandVanMandaatDoor" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{else}}
+            <li>Het ontbreken van afstanden van mandaat;</li>
+          {{/if}}
+          {{#if onverenigbaarheden.length}}
+            <li>Het bestaan van een situatie van onverenigbaarheid in hoofde van volgende verkozenen:
+              <ul class="bullet-list">
+                {{#each onverenigbaarheden as |verkozene|}}
+                  <li><span property="ext:bekrachtigdOnverenigbaarheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+          {{#if afwezigenMetKennisGeving.length}}
+            <li>De afwezigheid met kennisgeving van:
+              <ul class="bullet-list">
+                {{#each afwezigenMetKennisGeving as |verkozene|}}
+                  <li><span property="ext:bekrachtigdAfwezigheidMetKennisGeving" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+          {{#if afwezigen.length}}
+            <li>De afwezigheid zonder kennisgeving van volgende verkozenen:
+              <ul class="bullet-list">
+                {{#each afwezigen as |verkozene|}}
+                  <li><span property="ext:bekrachtigdAfwezigheid" resource={{verkozene.persoon.uri}}>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}};</span></li>
+                {{/each}}
+              </ul>
+            </li>
+          {{/if}}
+        </ul>
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 2</span>
+      <div property="prov:value"> De geloofsbrieven goed te keuren van:
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th>Officiële naam</th>
+              <th>Lijst</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each mandatarissenVoorGeloofsbrieven as |verkozene|}}
+              <tr>
+                <td>
+                  {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
+                </td>
+                <td>
+                  {{#if verkozene.lijst}}
+                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                      {{ctx.prop p="lijstnaam"}}
+                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                    {{/with-rdfa-resource}}
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 3</span>
+      <div property="prov:value"> Akte te nemen van de eedaflegging in handen van de voorzitter van:
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th>Officiële naam</th>
+              <th>Mandaat</th>
+              <th>Begin mandaat</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each aangesteldeMandatarissen as |verkozene|}}
+              <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
+                <td>
+                  {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
+                    {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
+                  {{/rdfa/ctx-linked-resource}}
+                </td>
+                <td>
+                  {{#rdfa/ctx-linked-resource resource=verkozene p="mandaat" as |model mandaat|}}
+                    <span property="org:role" resource="{{model.bestuursfunctie.uri}}">
+                      <span property="skos:prefLabel">{{model.bestuursfunctie.label}}</span>
+                    </span>
+                  {{/rdfa/ctx-linked-resource}}
+                </td>
+                <td>
+                  <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
+                    {{moment-format verkozene.start 'LL'}}
+                  </span>
+                  {{#if verkozene.isVerhinderd}}
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/c301248f-0199-45ca-b3e5-4c596731d5fe">
+                      (Verhinderd)
+                    </span>
+                  {{/if}}
+                  {{#if verkozene.isWaarnemend}}
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/e1ca6edd-55e1-4288-92a5-53f4cf71946a">
+                      (Waarnemend)
+                    </span>
+                  {{/if}}
+                  {{#if verkozene.isEffectief}}
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
+                      (Effectief)
+                    </span>
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+        <br>
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+    {{#mandataris-aanstelling-tabel/output-article}}
+      <span property="eli:number">Artikel 4</span>
+      <div property="prov:value">
+        {{#if verhinderdeMandatarissen.length}}
+          Akte te nemen van de verhindering van volgende raadsleden:
+          <table class="data-table data-table--lined data-table--zebra data-table--tight">
+            <thead>
+              <tr>
+                <th>Officiële naam</th>
+                <th>Lijst</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each verhinderdeMandatarissen as |verkozene|}}
+                <tr>
+                  <td>
+                    {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
+                  </td>
+                  <td>
+                    {{#if verkozene.lijst}}
+                      {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                        {{ctx.prop p="lijstnaam"}}
+                        <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                      {{/with-rdfa-resource}}
+                    {{/if}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{else}}
+          <p>Akte te nemen van het gegeven dat er geen raadsleden verhinderd zijn.</p>
+        {{/if}}
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+
+    {{#if waarnemendeMandatarissen.length}}
+      {{#mandataris-aanstelling-tabel/output-article}}
+        <span property="eli:number">Artikel 5</span>
+        <div property="prov:value"> De geloofsbrieven van volgende opvolgers die de verhinderde raadsleden vervangen voor de duur van de verhindering, goed te keuren:
+          <table class="data-table data-table--lined data-table--zebra data-table--tight">
+            <thead>
+              <tr>
+                <th>Officiële naam</th>
+                <th>Lijst</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each waarnemendeMandatarissen as |verkozene|}}
+                <tr>
+                  <td>
+                    {{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}
+                  </td>
+                  <td>
+                    {{#if verkozene.lijst}}
+                      {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                        {{ctx.prop p="lijstnaam"}}
+                        <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                      {{/with-rdfa-resource}}
+                    {{/if}}
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{/mandataris-aanstelling-tabel/output-article}}
+    {{/if}}
+
+    {{#mandataris-aanstelling-tabel/output-article}}
+      {{#if waarnemendeMandatarissen.length}}
+        <span property="eli:number">Artikel 6</span>
+      {{else}}
+        <span property="eli:number">Artikel 5</span>
+      {{/if}}
+      <div property="prov:value"> De rangorde van de gemeenteraadsleden als volgt vast te stellen:<br>
+        <table class="data-table data-table--lined data-table--zebra data-table--tight">
+          <thead>
+            <tr>
+              <th>Rang</th>
+              <th>Officiële naam</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each zetelendeMandatarissen as |verkozene|}}
+              <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
+                <td>
+                  {{rdfa/ctx-prop resource=verkozene p="rangorde"}}
+                </td>
+                <td>
+                  {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
+                    {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
+                  {{/rdfa/ctx-linked-resource}}
+                </td>
+                <td class="u-hidden">
+                  {{#if verkozene.isBurgemeester}}
+                    <span property="ext:isBurgemeester" content="true" datatype="xsd:boolean">burgemeester</span>
+                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
+                      (Effectief)
+                    </span>
+                    <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
+                      {{moment-format verkozene.start 'LL'}}
+                    </span>
+                  {{/if}}
+                  {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
+                    {{#if model.einde}}
+                      <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>
+                        {{moment-format model.einde 'LL'}}
+                      </span>
+                    {{/if}}
+                    {{#if model.start}}
+                      <span property="mandaat:start" datatype="xsd:date" content={{moment-format model.start 'YYYY-MM-DD'}}>
+                        {{moment-format model.start 'LL'}}
+                      </span>
+                    {{/if}}
+                  {{/rdfa/ctx-each-resource}}
+                  {{#if verkozene.resultaat}}
+                    {{#with-rdfa-resource resource=verkozene.resultaat as |ctx|}}
+                      {{ctx.prop p="aantalNaamstemmen"}}
+                      <span property="mandaat:isResultaatVan"  resource="{{verkozene.persoon.uri}}"></span>
+                    {{/with-rdfa-resource}}
+                  {{/if}}
+                  {{#if verkozene.lijst}}
+                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
+                      {{ctx.prop p="lijstnaam"}}
+                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
+                    {{/with-rdfa-resource}}
+                  {{/if}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    {{/mandataris-aanstelling-tabel/output-article}}
+  </ul>
+{{/if}}

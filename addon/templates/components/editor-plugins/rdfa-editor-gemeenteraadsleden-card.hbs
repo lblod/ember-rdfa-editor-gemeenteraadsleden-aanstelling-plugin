@@ -56,11 +56,11 @@
 
 {{#if popup}}
   {{#wu-modal
-		 title="Installatie gemeenteraadsleden"
-		 dialog-class="modal-dialog--wide modal-dialog--sectioned modal-dialog--wizard"
-		 dialog-content-class="modal-dialog__content--sectioned"
-		 onClose=(action 'togglePopup')
-		 as |m|}}
+     title="Installatie gemeenteraadsleden"
+     dialog-class="modal-dialog--wide modal-dialog--sectioned modal-dialog--wizard"
+     dialog-content-class="modal-dialog__content--sectioned"
+     onClose=(action 'togglePopup')
+     as |m|}}
     {{#wu-wizard isNumeric=true currentStep=currentStep as |wizard|}}
       {{#wizard.step as |step|}}
         {{step.header title='Samenstelling van de gemeenteraad'}}
@@ -74,10 +74,10 @@
             }}
           {{/m.content}}
           {{#m.buttons as |b|}}
-	          {{#wu-button-group}}
-	            {{wizard.next}}
-	            {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
-	          {{/wu-button-group}}
+            {{#wu-button-group}}
+              {{wizard.next}}
+              {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+            {{/wu-button-group}}
           {{/m.buttons}}
         {{/step.pane}}
       {{/wizard.step}}
@@ -115,15 +115,21 @@
                   mandatarissenVoorGeloofsbrieven=mandatarissenVoorGeloofsbrieven
                   aangesteldeMandatarissen=aangesteldeMandatarissen
                   waarnemendeMandatarissen=waarnemendeMandatarissen
+                  nieuweStijl=nieuweStijl
                 }}
               {{/editor-plugins/mandataris-aanstelling-tabel}}
             {{/m.content}}
             {{#m.buttons as |b|}}
-	            {{#wu-button-group}}
-	              {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
-	              {{wizard.previous}}
-	              {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
-	             {{/wu-button-group}}
+              {{#wu-button-group}}
+                <label class="checkbox checkbox--block u-spacer--bottom--small">
+                  {{input class="checkbox__toggle" type="checkbox" checked=nieuweStijl click=(action "toggleNieuweStijl") }}
+                  <span></span>
+                  <strong>Voeg toe in nieuwe stijl</strong>
+                </label>
+                {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
+                {{wizard.previous}}
+                {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+               {{/wu-button-group}}
             {{/m.buttons}}
           {{/step.pane}}
         {{/if}}

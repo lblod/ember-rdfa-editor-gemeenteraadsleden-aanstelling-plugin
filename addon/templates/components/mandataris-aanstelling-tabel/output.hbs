@@ -4,7 +4,7 @@
   <ul class="bullet-list"  property="ext:mandatarisTabelInput">
     {{#mandataris-aanstelling-tabel/output-article}}
       <span property="eli:number">Artikel 1</span>
-      <div property="prov:value"> De gemeenteraad neemt akte van:
+      <div property="prov:value"> De gemeenteraad neemt kennis van:
         <ul class="bullet-list">
           {{#if afstandenVanMandaat.length}}
             <li>De afstand van mandaat van volgende verkozenen:
@@ -81,7 +81,7 @@
 
     {{#mandataris-aanstelling-tabel/output-article}}
       <span property="eli:number">Artikel 3</span>
-      <div property="prov:value"> De gemeenteraad neemt akte van de eedaflegging in handen van de voorzitter van:
+      <div property="prov:value"> De gemeenteraad neemt kennis van de eedaflegging in handen van de voorzitter van:
         <table class="data-table data-table--lined data-table--zebra data-table--tight">
           <thead>
             <tr>
@@ -136,7 +136,7 @@
       <span property="eli:number">Artikel 4</span>
       <div property="prov:value">
         {{#if verhinderdeMandatarissen.length}}
-          De gemeenteraad neemt akte van de verhindering van volgende raadsleden:
+          De gemeenteraad neemt kennis van de verhindering van volgende raadsleden:
           <table class="data-table data-table--lined data-table--zebra data-table--tight">
             <thead>
               <tr>
@@ -163,7 +163,7 @@
             </tbody>
           </table>
         {{else}}
-          <p>De gemeenteraad neemt akte van het gegeven dat er geen raadsleden verhinderd zijn.</p>
+          <p>De gemeenteraad neemt kennis van het gegeven dat er geen raadsleden verhinderd zijn.</p>
         {{/if}}
       </div>
     {{/mandataris-aanstelling-tabel/output-article}}

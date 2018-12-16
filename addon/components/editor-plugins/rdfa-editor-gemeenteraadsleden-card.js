@@ -1,4 +1,4 @@
-import { reads, filter, filterBy, bool } from '@ember/object/computed';
+import { reads, filter, filterBy, bool, sort } from '@ember/object/computed';
 import { computed } from '@ember/object';
 import Component from '@ember/component';
 import { inject as service } from '@ember/service';
@@ -54,22 +54,25 @@ export default Component.extend({
   bestuursorgaan: reads('aanstelling.bestuursorgaan'),
   startDate: reads('aanstelling.startDate'),
   bestuursfunctie: reads('info.bestuursfunctie'),
-  mandatarissenVoorGeloofsbrieven: filter('mandatarissen', function(mandataris) {
+
+  sortedMandatarissen: sort('mandatarissen', (a,b) =>  a.persoon.get('achternaam').trim().localeCompare(b.persoon.get('achternaam').trim())),
+
+  mandatarissenVoorGeloofsbrieven: filter('sortedMandatarissen', function(mandataris) {
     return [defaultStatus, verhinderd].includes(mandataris.status);
   }),
-  aangesteldeMandatarissen: filter('mandatarissen', function(mandataris) {
+  aangesteldeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
     return [verhinderd, waarnemend, defaultStatus].includes(mandataris.status);
   }),
   zetelendeMandatarissen: filter('mandatarissen', function(mandataris) {
     return [waarnemend, defaultStatus, burgemeester].includes(mandataris.status);
   }),
-  waarnemendeMandatarissen: filterBy('mandatarissen', 'status', waarnemend),
-  verhinderdeMandatarissen: filterBy('mandatarissen', 'status', verhinderd),
-  afstandenVanMandaat: filterBy('mandatarissen', 'status', afstandMandaat),
-  onverenigbaarheden: filterBy('mandatarissen', 'status', onverenigbaarheid),
-  afwezigenMetKennisGeving: filterBy('mandatarissen', 'status', afwezigMetKennisname),
-  afwezigen: filterBy('mandatarissen', 'status', afwezigZonderKennisname),
-  verhinderd: filterBy('mandatarissen', 'status', verhinderd),
+  waarnemendeMandatarissen: filterBy('sortedMandatarissen', 'status', waarnemend),
+  verhinderdeMandatarissen: filterBy('sortedMandatarissen', 'status', verhinderd),
+  afstandenVanMandaat: filterBy('sortedMandatarissen', 'status', afstandMandaat),
+  onverenigbaarheden: filterBy('sortedMandatarissen', 'status', onverenigbaarheid),
+  afwezigenMetKennisGeving: filterBy('sortedMandatarissen', 'status', afwezigMetKennisname),
+  afwezigen: filterBy('sortedMandatarissen', 'status', afwezigZonderKennisname),
+  verhinderd: filterBy('sortedMandatarissen', 'status', verhinderd),
   outputId: computed('id', function() { return `output-mandataris-tabel-${this.id}`;}),
   async didReceiveAttrs() {
     this.fetchResources.perform();

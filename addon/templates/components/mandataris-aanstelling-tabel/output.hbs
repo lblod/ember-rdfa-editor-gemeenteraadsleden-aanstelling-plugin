@@ -1,6 +1,6 @@
 {{#if nieuweStijl}}
   {{!-- ********************************  nieuwe stijl ******************************** --}}
-  
+
   <ul class="bullet-list"  property="ext:mandatarisTabelInput">
     {{#mandataris-aanstelling-tabel/output-article}}
       <span property="eli:number">Artikel 1</span>
@@ -201,76 +201,12 @@
       {{/mandataris-aanstelling-tabel/output-article}}
     {{/if}}
 
-    {{#mandataris-aanstelling-tabel/output-article}}
-      {{#if waarnemendeMandatarissen.length}}
-        <span property="eli:number">Artikel 6</span>
-      {{else}}
-        <span property="eli:number">Artikel 5</span>
-      {{/if}}
-      <div property="prov:value"> De gemeenteraad stelt de rangorde van de gemeenteraadsleden als volgt vast:<br>
-        <table class="data-table data-table--lined data-table--zebra data-table--tight">
-          <thead>
-            <tr>
-              <th>Rang</th>
-              <th>Officiële naam</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each zetelendeMandatarissen as |verkozene|}}
-              <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
-                <td>
-                  {{rdfa/ctx-prop resource=verkozene p="rangorde"}}
-                </td>
-                <td>
-                  {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
-                    {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
-                  {{/rdfa/ctx-linked-resource}}
-                </td>
-                <td class="u-hidden">
-                  {{#if verkozene.isBurgemeester}}
-                    <span property="ext:isBurgemeester" content="true" datatype="xsd:boolean">burgemeester</span>
-                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
-                      (Effectief)
-                    </span>
-                    <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
-                      {{moment-format verkozene.start 'LL'}}
-                    </span>
-                  {{/if}}
-                  {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
-                    {{#if model.einde}}
-                      <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>
-                        {{moment-format model.einde 'LL'}}
-                      </span>
-                    {{/if}}
-                    {{#if model.start}}
-                      <span property="mandaat:start" datatype="xsd:date" content={{moment-format model.start 'YYYY-MM-DD'}}>
-                        {{moment-format model.start 'LL'}}
-                      </span>
-                    {{/if}}
-                  {{/rdfa/ctx-each-resource}}
-                  {{#if verkozene.resultaat}}
-                    {{#with-rdfa-resource resource=verkozene.resultaat as |ctx|}}
-                      {{ctx.prop p="aantalNaamstemmen"}}
-                      <span property="mandaat:isResultaatVan"  resource="{{verkozene.persoon.uri}}"></span>
-                    {{/with-rdfa-resource}}
-                  {{/if}}
-                  {{#if verkozene.lijst}}
-                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
-                      {{ctx.prop p="lijstnaam"}}
-                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
-                    {{/with-rdfa-resource}}
-                  {{/if}}
-                </td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      </div>
-    {{/mandataris-aanstelling-tabel/output-article}}
+    {{mandataris-aanstelling-tabel/rangorde/output zetelendeMandatarissen=zetelendeMandatarissen waarnemendeMandatarissen=waarnemendeMandatarisen}}
+
   </ul>
 {{else}}
   {{!-- ********************************  oude  stijl ******************************** --}}
-  
+
   <ul class="bullet-list"  property="ext:mandatarisTabelInput">
     {{#mandataris-aanstelling-tabel/output-article}}
       <span property="eli:number">Artikel 1</span>
@@ -471,71 +407,6 @@
       {{/mandataris-aanstelling-tabel/output-article}}
     {{/if}}
 
-    {{#mandataris-aanstelling-tabel/output-article}}
-      {{#if waarnemendeMandatarissen.length}}
-        <span property="eli:number">Artikel 6</span>
-      {{else}}
-        <span property="eli:number">Artikel 5</span>
-      {{/if}}
-      <div property="prov:value"> De rangorde van de gemeenteraadsleden als volgt vast te stellen:<br>
-        <table class="data-table data-table--lined data-table--zebra data-table--tight">
-          <thead>
-            <tr>
-              <th>Rang</th>
-              <th>Officiële naam</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each zetelendeMandatarissen as |verkozene|}}
-              <tr property="ext:bekrachtigtAanstellingVan" resource={{verkozene.uri}} typeof={{verkozene.rdfaBindings.class}}>
-                <td>
-                  {{rdfa/ctx-prop resource=verkozene p="rangorde"}}
-                </td>
-                <td>
-                  {{#rdfa/ctx-linked-resource resource=verkozene p="persoon" as |model persoon|}}
-                    {{persoon.prop resource=model p="gebruikteVoornaam"}} {{persoon.prop resource=model p="achternaam"}}
-                  {{/rdfa/ctx-linked-resource}}
-                </td>
-                <td class="u-hidden">
-                  {{#if verkozene.isBurgemeester}}
-                    <span property="ext:isBurgemeester" content="true" datatype="xsd:boolean">burgemeester</span>
-                    <span property="mandaat:status" resource="http://data.vlaanderen.be/id/concept/MandatarisStatusCode/21063a5b-912c-4241-841c-cc7fb3c73e75">
-                      (Effectief)
-                    </span>
-                    <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
-                      {{moment-format verkozene.start 'LL'}}
-                    </span>
-                  {{/if}}
-                  {{#rdfa/ctx-each-resource resource=verkozene p="oudeMandaten" as |model mandaat|}}
-                    {{#if model.einde}}
-                      <span property="mandaat:einde" datatype="xsd:date" content={{moment-format model.einde 'YYYY-MM-DD'}}>
-                        {{moment-format model.einde 'LL'}}
-                      </span>
-                    {{/if}}
-                    {{#if model.start}}
-                      <span property="mandaat:start" datatype="xsd:date" content={{moment-format model.start 'YYYY-MM-DD'}}>
-                        {{moment-format model.start 'LL'}}
-                      </span>
-                    {{/if}}
-                  {{/rdfa/ctx-each-resource}}
-                  {{#if verkozene.resultaat}}
-                    {{#with-rdfa-resource resource=verkozene.resultaat as |ctx|}}
-                      {{ctx.prop p="aantalNaamstemmen"}}
-                      <span property="mandaat:isResultaatVan"  resource="{{verkozene.persoon.uri}}"></span>
-                    {{/with-rdfa-resource}}
-                  {{/if}}
-                  {{#if verkozene.lijst}}
-                    {{#with-rdfa-resource resource=verkozene.lijst as |ctx|}}
-                      {{ctx.prop p="lijstnaam"}}
-                      <span property="mandaat:heeftKandidaat" resource="{{verkozene.persoon.uri}}"></span>
-                    {{/with-rdfa-resource}}
-                  {{/if}}
-                </td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      </div>
-    {{/mandataris-aanstelling-tabel/output-article}}
+    {{mandataris-aanstelling-tabel/rangorde/output zetelendeMandatarissen=zetelendeMandatarissen waarnemendeMandatarissen=waarnemendeMandatarisen}}
   </ul>
 {{/if}}

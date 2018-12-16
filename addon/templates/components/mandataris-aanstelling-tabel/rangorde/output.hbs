@@ -1,0 +1,53 @@
+{{#if nieuweStijl}}
+
+  {{#mandataris-aanstelling-tabel/output-article}}
+    {{#if waarnemendeMandatarissen.length}}
+      <span property="eli:number">Artikel 6</span>
+    {{else}}
+      <span property="eli:number">Artikel 5</span>
+    {{/if}}
+    <div property="prov:value"> De gemeenteraad stelt de rangorde van de gemeenteraadsleden als volgt vast:<br>
+      <table class="data-table data-table--lined data-table--zebra data-table--tight">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Officiële naam</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each zetelendeMandatarissen as |verkozene|}}
+            {{mandataris-aanstelling-tabel/rangorde/output-row verkozene=verkozene}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{/mandataris-aanstelling-tabel/output-article}}
+
+{{else}}
+  {{#mandataris-aanstelling-tabel/output-article}}
+    {{#if waarnemendeMandatarissen.length}}
+      <span property="eli:number">Artikel 6</span>
+    {{else}}
+      <span property="eli:number">Artikel 5</span>
+    {{/if}}
+    <div property="prov:value"> De rangorde van de gemeenteraadsleden als volgt vast te stellen:<br>
+      <table class="data-table data-table--lined data-table--zebra data-table--tight">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Officiële naam</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each zetelendeMandatarissen as |verkozene|}}
+            {{mandataris-aanstelling-tabel/rangorde/output-row verkozene=verkozene}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{/mandataris-aanstelling-tabel/output-article}}
+
+{{/if}}
+
+
+{{yield}}

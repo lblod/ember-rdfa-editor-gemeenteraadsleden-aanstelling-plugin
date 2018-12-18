@@ -18,7 +18,7 @@ export default Component.extend({
   fetchOudeMandaten: task( function *() {
     const mandaten = yield this.store.query('mandataris', {
       filter: {
-        'is-bestuurlijke-alias-van': {':uri:': this.record.persoon.uri },
+        'is-bestuurlijke-alias-van': {':uri:': this.record.persoon.get('uri') },
         bekleedt: { bestuursfunctie: {':uri:': 'http://data.vlaanderen.be/id/concept/BestuursfunctieCode/5ab0e9b8a3b2ca7c5e000011' }} // TODO: hardcoded
       },
       include: 'bekleedt.bestuursfunctie'

@@ -10,8 +10,17 @@ export default Component.extend({
     this.set('record', null);
     if (!isEmpty(this.mandatarissen)) {
       var rangorde = 1;
-      this.mandatarissen.forEach( (mandataris) => mandataris.set('rangorde', rangorde++));
-      this.set('verkozenen', this.mandatarissen);
+      this.mandatarissen.forEach( (mandataris) => {
+        if (!mandataris.rangorde) {
+          mandataris.set('rangorde', rangorde++);
+        }
+        else {
+          //it might be a string
+          rangorde = Number(mandataris.rangorde);
+          mandataris.set('rangorde', rangorde);
+        }
+      });
+      this.set('verkozenen', this.mandatarissen.sortBy('rangorde'));
     }
   },
   renumberVerkozenen() {

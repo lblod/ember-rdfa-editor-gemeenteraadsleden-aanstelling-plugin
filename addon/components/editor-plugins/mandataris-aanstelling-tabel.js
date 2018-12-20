@@ -7,7 +7,6 @@ import { computed } from '@ember/object';
 export default Component.extend({
   layout,
   store: service(),
-
   verkozenen: computed('mandatarissen', 'mandatarissen.[]', 'mandatarissen.@each.rangorde', function(){
     return this.mandatarissen.sortBy('rangorde');
   }),

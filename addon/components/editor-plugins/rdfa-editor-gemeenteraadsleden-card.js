@@ -79,7 +79,7 @@ export default Component.extend({
     this.set('currentStep', null);
     this.set('record', null);
   },
-  fetchResources: task( function * () {
+  fetchResources: task( function * (flushTable = false) {
     if (this.bestuursorgaan && this.bestuursfunctie) {
       const mandaten = yield this.store.query('mandaat', {
         filter: {
@@ -89,7 +89,7 @@ export default Component.extend({
       });
       this.set('mandaat', mandaten.get('firstObject'));
     }
-    if (this.info.node) {
+    if (this.info.node && !flushTable) {
       this.set('mandatarissen', yield this.info.data);
     }
     else {
@@ -121,6 +121,11 @@ export default Component.extend({
     }
   }),
   actions: {
+    flushTable(){
+      this.fetchResources.perform(true);
+      this.set('currentStep', null);
+      this.set('record', null);
+    },
     insert(){
       const html = document.getElementById(this.outputId).innerHTML;
       if (this.info.node) {

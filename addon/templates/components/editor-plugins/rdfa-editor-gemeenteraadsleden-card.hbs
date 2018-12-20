@@ -61,79 +61,99 @@
      dialog-content-class="modal-dialog__content--sectioned"
      onClose=(action 'togglePopup')
      as |m|}}
-    {{#wu-wizard isNumeric=true currentStep=currentStep as |wizard|}}
-      {{#wizard.step as |step|}}
-        {{step.header title='Samenstelling van de gemeenteraad'}}
-        {{#step.pane as |pane|}}
-          {{#m.content sectioned=true}}
-            {{mandataris-aanstelling-tabel/samenstelling
-              mandatarissen=mandatarissen
-              defaultMandaat=mandaat
-              bestuursorgaan=bestuursorgaan
-              addMandataris=(action 'addMandataris')
-            }}
-          {{/m.content}}
-          {{#m.buttons as |b|}}
-            {{#wu-button-group}}
-              {{wizard.next}}
-              {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
-            {{/wu-button-group}}
-          {{/m.buttons}}
-        {{/step.pane}}
-      {{/wizard.step}}
-      {{#wizard.step as |step|}}
-        {{#if isEditing}}
-          {{#step.pane}}
-            {{#m.content sectioned=true}}
-              {{mandataris-aanstelling-tabel/edit-record record=record}}
-            {{/m.content}}
-            {{#m.buttons}}
-              {{#wu-button onClick=(action 'setRecord')}}Bewaar en keer terug naar tabel{{/wu-button}}
-            {{/m.buttons}}
-          {{/step.pane}}
+
+    <div class="u-spacer--bottom--tiny">
+      <div class="grid grid--collapse">
+        {{#if fetchResources.isRunning}}
+          <div class="col--12-12">
+            <p class="loader"><span class="u-visually-hidden">Aan het laden</span></p>
+          </div>
         {{else}}
-          {{step.header title='Rangorde van de gemeenteraadsleden'}}
-          {{#step.pane}}
+          <div class="col--4-12">
+            {{#wu-link-button class="button--small button--link u-spacer--left--tiny" isNarrow=true onClick=(action "flushTable")}}
+              <i class="fa fa-rotate-right"></i> Data opnieuw inladen (dit verwijdert huidige tabel!)
+            {{/wu-link-button}}
+          </div>
+        {{/if}}
+      </div>
+    </div>
+
+    {{#unless fetchResources.isRunning}}
+
+      {{#wu-wizard isNumeric=true currentStep=currentStep as |wizard|}}
+        {{#wizard.step as |step|}}
+          {{step.header title='Samenstelling van de gemeenteraad'}}
+          {{#step.pane as |pane|}}
             {{#m.content sectioned=true}}
-              {{#editor-plugins/mandataris-aanstelling-tabel
-                 bestuursorgaan=bestuursorgaan
-                 defaultMandaat=mandaat
-                 mandatarissen=zetelendeMandatarissen
-                 startDate=startDate
-                 setRecord=(action 'setRecord')
-                 as |table|}}
-                {{table.overview}}
-                {{table.output
-                  id=outputId
-                  class="u-hidden"
-                  afstandenVanMandaat=afstandenVanMandaat
-                  onverenigbaarheden=onverenigbaarheden
-                  afwezigenMetKennisGeving=afwezigenMetKennisGeving
-                  afwezigen=afwezigen
-                  zetelendeMandatarissen=zetelendeMandatarissen
-                  verhinderdeMandatarissen=verhinderdeMandatarissen
-                  mandatarissenVoorGeloofsbrieven=mandatarissenVoorGeloofsbrieven
-                  aangesteldeMandatarissen=aangesteldeMandatarissen
-                  waarnemendeMandatarissen=waarnemendeMandatarissen
-                  nieuweStijl=nieuweStijl
-                }}
-              {{/editor-plugins/mandataris-aanstelling-tabel}}
+              {{mandataris-aanstelling-tabel/samenstelling
+                mandatarissen=mandatarissen
+                defaultMandaat=mandaat
+                bestuursorgaan=bestuursorgaan
+                addMandataris=(action 'addMandataris')
+              }}
             {{/m.content}}
             {{#m.buttons as |b|}}
               {{#wu-button-group}}
-                <label class="checkbox checkbox--block u-spacer--bottom--small">
-                  {{input class="checkbox__toggle" type="checkbox" checked=nieuweStijl click=(action "toggleNieuweStijl") }}
-                  <span></span>
-                  <strong>Voeg toe in nieuwe stijl</strong>
-                </label>
-                {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
-                {{wizard.previous}}
+                {{wizard.next}}
                 {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
-               {{/wu-button-group}}
+              {{/wu-button-group}}
             {{/m.buttons}}
           {{/step.pane}}
-        {{/if}}
-      {{/wizard.step}}
-    {{/wu-wizard}}
+        {{/wizard.step}}
+        {{#wizard.step as |step|}}
+          {{#if isEditing}}
+            {{#step.pane}}
+              {{#m.content sectioned=true}}
+                {{mandataris-aanstelling-tabel/edit-record record=record}}
+              {{/m.content}}
+              {{#m.buttons}}
+                {{#wu-button onClick=(action 'setRecord')}}Bewaar en keer terug naar tabel{{/wu-button}}
+              {{/m.buttons}}
+            {{/step.pane}}
+          {{else}}
+            {{step.header title='Rangorde van de gemeenteraadsleden'}}
+            {{#step.pane}}
+              {{#m.content sectioned=true}}
+                {{#editor-plugins/mandataris-aanstelling-tabel
+                   bestuursorgaan=bestuursorgaan
+                   defaultMandaat=mandaat
+                   mandatarissen=zetelendeMandatarissen
+                   startDate=startDate
+                   setRecord=(action 'setRecord')
+                   as |table|}}
+                  {{table.overview}}
+                  {{table.output
+                    id=outputId
+                    class="u-hidden"
+                    afstandenVanMandaat=afstandenVanMandaat
+                    onverenigbaarheden=onverenigbaarheden
+                    afwezigenMetKennisGeving=afwezigenMetKennisGeving
+                    afwezigen=afwezigen
+                    zetelendeMandatarissen=zetelendeMandatarissen
+                    verhinderdeMandatarissen=verhinderdeMandatarissen
+                    mandatarissenVoorGeloofsbrieven=mandatarissenVoorGeloofsbrieven
+                    aangesteldeMandatarissen=aangesteldeMandatarissen
+                    waarnemendeMandatarissen=waarnemendeMandatarissen
+                    nieuweStijl=nieuweStijl
+                  }}
+                {{/editor-plugins/mandataris-aanstelling-tabel}}
+              {{/m.content}}
+              {{#m.buttons as |b|}}
+                {{#wu-button-group}}
+                  <label class="checkbox checkbox--block u-spacer--bottom--small">
+                    {{input class="checkbox__toggle" type="checkbox" checked=nieuweStijl click=(action "toggleNieuweStijl") }}
+                    <span></span>
+                    <strong>Voeg toe in nieuwe stijl</strong>
+                  </label>
+                  {{wu-button label="Voeg tabel in" class="button button--narrow" onClick=(action 'insert')}}
+                  {{wizard.previous}}
+                  {{wu-button label="Annuleer" class="button button--alt button--narrow" onClick=(action 'togglePopup')}}
+                 {{/wu-button-group}}
+              {{/m.buttons}}
+            {{/step.pane}}
+          {{/if}}
+        {{/wizard.step}}
+      {{/wu-wizard}}
+     {{/unless}}
   {{/wu-modal}}
 {{/if}}

@@ -4,9 +4,12 @@
       <th>Officiële naam</th>
       <th>Lijst</th>
       <th>
+        Status
+      </th>
+      <th>
         <div class="grid">
           <div class="col--6-12">
-            Status
+            Actie
           </div>
           <div class="col--6-12 u-align--right">
             {{#wu-link-button class="button--small" isNarrow=true onClick=(action "add")}}
@@ -14,7 +17,7 @@
             {{/wu-link-button}}
           </div>
         </div>
-       </th>
+      </th>
     </tr>
   </thead>
   <tbody>
@@ -38,15 +41,9 @@
     </tr>
     {{/if}}
     {{#each verkozenen as |verkozene|}}
-      <tr>
-        <td><strong>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</strong></td>
-        <td>{{verkozene.lijst.lijstnaam}}</td>
-        <td>
-           {{mandataris-aanstelling-tabel/mandaat-status verkozene=verkozene}}
-        </td>
-      </tr>
+      {{mandataris-aanstelling-tabel/samenstelling-row verkozene=verkozene  onRemove=(action "remove")}}
     {{else}}
-      <td colspan="4">
+      <td colspan="5">
         Er werden geen effectief verkozenen gevonden
       </td>
     {{/each}}

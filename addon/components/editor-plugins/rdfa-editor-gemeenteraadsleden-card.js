@@ -55,7 +55,9 @@ export default Component.extend({
   startDate: reads('aanstelling.startDate'),
   bestuursfunctie: reads('info.bestuursfunctie'),
 
-  sortedMandatarissen: sort('mandatarissen', (a,b) =>  a.persoon.get('achternaam').trim().localeCompare(b.persoon.get('achternaam').trim())),
+  sortedMandatarissen: computed('mandatarissen', 'mandatarissen.[]', 'mandatarissen.@each.status', function(){
+    return this.mandatarissen.sort((a,b) =>  a.persoon.get('achternaam').trim().localeCompare(b.persoon.get('achternaam').trim()));
+  }),
 
   mandatarissenVoorGeloofsbrieven: filter('sortedMandatarissen', function(mandataris) {
     return [defaultStatus, verhinderd].includes(mandataris.status);
@@ -63,7 +65,7 @@ export default Component.extend({
   aangesteldeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
     return [verhinderd, waarnemend, defaultStatus].includes(mandataris.status);
   }),
-  zetelendeMandatarissen: filter('mandatarissen', function(mandataris) {
+  zetelendeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
     return [waarnemend, defaultStatus, burgemeester].includes(mandataris.status);
   }),
   waarnemendeMandatarissen: filterBy('sortedMandatarissen', 'status', waarnemend),

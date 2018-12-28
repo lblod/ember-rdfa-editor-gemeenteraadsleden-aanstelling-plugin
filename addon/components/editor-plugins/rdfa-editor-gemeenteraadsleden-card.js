@@ -54,8 +54,7 @@ export default Component.extend({
   bestuursorgaan: reads('aanstelling.bestuursorgaan'),
   startDate: reads('aanstelling.startDate'),
   bestuursfunctie: reads('info.bestuursfunctie'),
-
-  sortedMandatarissen: computed('mandatarissen', 'mandatarissen.[]', 'mandatarissen.@each.status', function(){
+  sortedMandatarissen: computed('mandatarissen', 'mandatarissen.@each.status', function(){
     return this.mandatarissen.sort((a,b) =>  a.persoon.get('achternaam').trim().localeCompare(b.persoon.get('achternaam').trim()));
   }),
 
@@ -65,9 +64,11 @@ export default Component.extend({
   aangesteldeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
     return [verhinderd, waarnemend, defaultStatus].includes(mandataris.status);
   }),
-  zetelendeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
+  _zetelendeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
     return [waarnemend, defaultStatus, burgemeester].includes(mandataris.status);
   }),
+  rangordeSort: Object.freeze(['rangorde']),
+  zetelendeMandatarissen: sort('_zetelendeMandatarissen','rangordeSort'),
   waarnemendeMandatarissen: filterBy('sortedMandatarissen', 'status', waarnemend),
   verhinderdeMandatarissen: filterBy('sortedMandatarissen', 'status', verhinderd),
   afstandenVanMandaat: filterBy('sortedMandatarissen', 'status', afstandMandaat),

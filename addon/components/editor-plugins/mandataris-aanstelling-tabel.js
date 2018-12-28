@@ -1,9 +1,8 @@
 import Component from '@ember/component';
 import layout from '../../templates/components/editor-plugins/mandataris-aanstelling-tabel';
 import { inject as service } from '@ember/service';
-import { isEmpty } from '@ember/utils';
 import { computed } from '@ember/object';
-
+import { next } from '@ember/runloop';
 export default Component.extend({
   layout,
   store: service(),
@@ -13,19 +12,9 @@ export default Component.extend({
 
   didReceiveAttrs() {
     this.set('record', null);
-    if (!isEmpty(this.mandatarissen)) {
-      var rangorde = 1;
-      this.mandatarissen.forEach( (mandataris) => {
-        if (!mandataris.rangorde) {
-          mandataris.set('rangorde', rangorde++);
-        }
-        else {
-          //it might be a string
-          rangorde = Number(mandataris.rangorde);
-          mandataris.set('rangorde', rangorde);
-        }
-      });
-    }
+    // next runloop because this triggers a reorder in the top level component
+    // causing mandatarissen to change twice in the same runloop
+    next(this, this.renumberMandatarissen);
   },
   renumberMandatarissen() {
     var orde = 1;

@@ -76,17 +76,19 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     }
   }),
   async buildMandatarisFromTriples(triples) {
-    function setPropIfTripleFound(triples, obj, prop) {
+    function setPropIfTripleFound(triples, obj, prop, isInt=false) {
       const triple = triples.find((t) => t.predicate === obj.rdfaBindings[prop]);
       if (triple) {
         if (triple.datatype === 'http://www.w3.org/2001/XMLSchema#date')
           obj.set(prop, new Date(triple.object.trim()));
+        else if (isInt)
+          obj.set(prop, Number(triple.object.trim()));
         else
           obj.set(prop, triple.object.trim());
       }
     }
     const mandataris = AanTeStellenMandataris.create({ uri: triples[0].subject, status: defaultStatus});
-    setPropIfTripleFound(triples, mandataris, 'rangorde');
+    setPropIfTripleFound(triples, mandataris, 'rangorde', true);
     setPropIfTripleFound(triples, mandataris, 'start');
     setPropIfTripleFound(triples, mandataris, 'einde');
     mandataris.set('mandaat', this.mandaat);

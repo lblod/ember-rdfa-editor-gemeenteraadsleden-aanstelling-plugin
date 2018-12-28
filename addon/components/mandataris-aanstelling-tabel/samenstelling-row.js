@@ -1,6 +1,5 @@
 import Component from '@ember/component';
 import layout from '../../templates/components/mandataris-aanstelling-tabel/samenstelling-row';
-import { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
 
 export default Component.extend({
@@ -9,8 +8,8 @@ export default Component.extend({
   opvolgerUri: 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/4c713f09-1317-4860-bbbd-e8f7dfd78a2f',
 
   checkOpvolger: task(function *(){
-    let results = (yield this.verkozene.get('persoon.verkiezingsresultaten')).firstObject;
-    let gevolg = yield results.gevolg;
+    let results = this.verkozene.resultaat;
+    let gevolg = yield results.get('gevolg');
     let isOpvolger = gevolg.uri === this.opvolgerUri;
     this.set('isOpvolger', isOpvolger);
   }),

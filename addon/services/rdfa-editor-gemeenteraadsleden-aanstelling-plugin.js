@@ -30,11 +30,11 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     this._super(...arguments);
   },
 
-  personQueryFilter(uris) {
+  personQueryFilter(uri) {
     return {
       filter: {
         'is-resultaat-van': {
-          ':uri:': uris.join(',')
+          ':uri:': uri
         },
         'is-resultaat-voor': {'rechtstreekse-verkiezing': {'stelt-samen': {':uri:': this.bestuursorgaan}}}
       },
@@ -104,7 +104,7 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
     }
     const persoonURI = triples.find((t) => t.predicate === mandataris.rdfaBindings.persoon);
     if (persoonURI) {
-      const resultaat = await this.store.query('verkiezingsresultaat', this.personQueryFilter([persoonURI.object]));
+      const resultaat = await this.store.query('verkiezingsresultaat', this.personQueryFilter(persoonURI.object));
       mandataris.set('resultaat', resultaat.get('firstObject'));
       mandataris.set('persoon', resultaat.get('firstObject.isResultaatVan'));
       mandataris.set('lijst', resultaat.get('firstObject.isResultaatVoor'));
@@ -114,7 +114,9 @@ const EmberRdfaEditorGemeenteraadsledenAanstellingPlugin = Service.extend({
   async buildNietAangesteldeMandataris(triples, predicate, status) {
     const uris = triples.filter((t) => t.predicate === predicate).map((t) => t.object);
     if (uris.length > 0) {
-      const resultaten = await this.store.query('verkiezingsresultaat', this.personQueryFilter(uris));
+      const queries = uris.map( (uri) => this.store.query('verkiezingsresultaat', this.personQueryFilter(uri)));
+      const results = await Promise.all(queries);
+      const resultaten = results.map((r) => r.get('firstObject'));
       return resultaten.map( (resultaat) => AanTeStellenMandataris.create({
         resultaat,
         persoon: resultaat.get('isResultaatVan'),

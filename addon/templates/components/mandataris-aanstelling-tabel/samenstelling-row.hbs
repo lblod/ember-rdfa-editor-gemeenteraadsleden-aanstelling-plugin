@@ -1,0 +1,12 @@
+<td><strong>{{verkozene.persoon.gebruikteVoornaam}} {{verkozene.persoon.achternaam}}</strong></td>
+<td>{{verkozene.lijst.lijstnaam}}</td>
+<td>
+  {{mandataris-aanstelling-tabel/mandaat-status verkozene=verkozene}}
+</td>
+<td>
+  {{#if isOpvolger}}
+    {{#wu-button size="small" class="button--alt" isNarrow=true onClick=(action 'remove' verkozene)}}
+      <i class="vi vi-cross"></i> Verwijder opvolger
+    {{/wu-button}}
+  {{/if}}
+</td>

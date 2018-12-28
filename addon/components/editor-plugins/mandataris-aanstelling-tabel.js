@@ -7,9 +7,7 @@ import { computed } from '@ember/object';
 export default Component.extend({
   layout,
   store: service(),
-
   verkozenen: computed('mandatarissen', 'mandatarissen.[]', 'mandatarissen.@each.rangorde', function(){
-    this.renumberVerkozenen();
     return this.mandatarissen.sortBy('rangorde');
   }),
 
@@ -29,7 +27,7 @@ export default Component.extend({
       });
     }
   },
-  renumberVerkozenen() {
+  renumberMandatarissen() {
     var orde = 1;
     for(var verkozene of this.mandatarissen) {
       verkozene.set('rangorde', orde++);
@@ -41,6 +39,7 @@ export default Component.extend({
       if (index > 0) {
         this.mandatarissen.removeObject(verkozene);
         this.mandatarissen.insertAt(index -1, verkozene);
+        this.renumberMandatarissen();
       }
     },
     down(verkozene) {
@@ -48,10 +47,8 @@ export default Component.extend({
       if (index < this.mandatarissen.length) {
         this.mandatarissen.removeObject(verkozene);
         this.mandatarissen.insertAt(index + 1, verkozene);
+        this.renumberMandatarissen();
       }
-    },
-    remove(verkozene) {
-      this.mandatarissen.removeObject(verkozene);
     },
     setRecord(verkozene) {
       this.setRecord(verkozene);

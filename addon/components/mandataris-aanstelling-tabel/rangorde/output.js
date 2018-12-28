@@ -4,9 +4,6 @@ import { sort } from '@ember/object/computed';
 
 export default Component.extend({
   layout,
-  sortedMandatarissen: sort('zetelendeMandatarissen', 'sort'),
-  init() {
-    this._super(...arguments);
-    this.set('sort', ['rangorde']);
-  }
+  sort: Object.freeze(['rangorde']),
+  sortedMandatarissen: sort('zetelendeMandatarissen', 'sort')
 });

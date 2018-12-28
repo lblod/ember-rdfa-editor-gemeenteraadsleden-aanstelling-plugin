@@ -14,7 +14,7 @@ const waarnemend = 'waarnemend';
 const burgemeester = 'benoemd als burgemeester';
 export default EmberObject.extend({
   uri: null,
-  rangorde: 0,
+  rangorde: null,
   persoon: null,
   mandaat: null,
   status: null,
@@ -55,6 +55,7 @@ export default EmberObject.extend({
   init() {
     this._super(...arguments);
     this.set('oudeMandaten', A());
+    this.set('rangorde', 1);
     if (! this.uri)
       this.set('uri', `http://data.lblod.info/id/mandatarissen/${uuid()}`);
   }

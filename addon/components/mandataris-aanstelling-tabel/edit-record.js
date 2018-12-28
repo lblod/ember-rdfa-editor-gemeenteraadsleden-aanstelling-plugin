@@ -26,7 +26,7 @@ export default Component.extend({
     this.record.set('oudeMandaten', mandaten.map((m) => AanTeStellenMandataris.create({ uri: m.uri, start: m.start, einde: m.einde, mandaat: m.bekleedt })));
   }),
   oudeMandaten: alias('record.oudeMandaten'),
-  mandatenSort:['start'],
+  mandatenSort: Object.freeze(['start']),
   sortedMandaten: sort('oudeMandaten', 'mandatenSort'),
   actions: {
     removeOldMandaat(mandaat) {

@@ -26,7 +26,8 @@
     "ember-cli-htmlbars-inline-precompile": "^1.0.3",
     "uuid": "^3.3.2",
     "ember-auto-import": "^1.2.13",
-    "ember-concurrency": "^0.8.22"
+    "ember-concurrency": "^0.8.22",
+    "ember-moment": "^7.6.0"
   },
   "devDependencies": {
     "@lblod/ember-vo-webuniversum": "^0.17.0",

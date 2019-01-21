@@ -3,6 +3,7 @@ import EmberObject from '@ember/object';
 import { computed } from '@ember/object';
 import { equal } from '@ember/object/computed';
 import uuid from 'uuid/v4';
+import moment from 'moment';
 
 const defaultStatus = 'opname mandaat';
 const afstandMandaat = 'afstand mandaat';
@@ -14,7 +15,7 @@ const waarnemend = 'waarnemend';
 const burgemeester = 'benoemd als burgemeester';
 export default EmberObject.extend({
   uri: null,
-  rangorde: 0,
+  rangorde: null,
   persoon: null,
   mandaat: null,
   status: null,
@@ -35,26 +36,29 @@ export default EmberObject.extend({
   isEffectief: equal('status', defaultStatus),
   isWaarnemend: equal('status', waarnemend),
   isBurgemeester: equal('status', burgemeester),
-  ancieniteit: computed('oudeMandaten.[].{start,einde}', function () {
+  ancieniteit: computed('oudeMandaten.[]','oudeMandaten.@each.{start,einde}', function () {
+
+   /*
+    * De regels: elke (kalender)dag dat ze raadslid zijn (dus de startdatum meetellen en volgens mij ook de einddatum);
+    * als er een periode tussen zit dat ze geen raadslid zijn, moeten ze een nieuwe regel invoeren, dus het aantal dagen van elke periode
+    * (elke lijn) moeten samengeteld worden.
+    * (...)
+    * Is dat niet makkelijker als wat er nu staat? Dus dat je enkel het aantal dagen toont (en dus niet moet afronden)?
+   */
     var ancieniteit = 0;
     for (const mandaat of this.oudeMandaten) {
       if (mandaat.start && mandaat.start instanceof Date && mandaat.einde && mandaat.einde instanceof Date) {
-        const nextDay = new Date(mandaat.einde);
-        nextDay.setDate(mandaat.einde.getDate() + 1);
-        var d2Y = nextDay.getFullYear();
-        var d1Y = mandaat.start.getFullYear();
-        var d2M = nextDay.getMonth();
-        var d1M = mandaat.start.getMonth();
-        ancieniteit = ancieniteit + (d2M - d1M + 12*(d2Y - d1Y));
+        let days = moment(mandaat.einde).diff(mandaat.start, 'days') + 1; //inclusief end date
+        ancieniteit = ancieniteit + days;
       }
     }
-    const years = Math.floor(ancieniteit / 12);
-    const months = ancieniteit % 12;
-    return `${years} jaar ${months} maanden`;
+    return `${ancieniteit} dagen`;
   }),
+
   init() {
     this._super(...arguments);
     this.set('oudeMandaten', A());
+    this.set('rangorde', 1);
     if (! this.uri)
       this.set('uri', `http://data.lblod.info/id/mandatarissen/${uuid()}`);
   }

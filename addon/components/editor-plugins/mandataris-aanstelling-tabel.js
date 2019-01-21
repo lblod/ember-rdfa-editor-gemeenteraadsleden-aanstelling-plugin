@@ -1,54 +1,43 @@
 import Component from '@ember/component';
 import layout from '../../templates/components/editor-plugins/mandataris-aanstelling-tabel';
 import { inject as service } from '@ember/service';
-import { isEmpty } from '@ember/utils';
-
+import { computed } from '@ember/object';
+import { next } from '@ember/runloop';
 export default Component.extend({
   layout,
   store: service(),
+  verkozenen: computed('mandatarissen', 'mandatarissen.@each.rangorde', function(){
+    return this.mandatarissen.sortBy('rangorde');
+  }),
+
   didReceiveAttrs() {
     this.set('record', null);
-    if (!isEmpty(this.mandatarissen)) {
-      var rangorde = 1;
-      this.mandatarissen.forEach( (mandataris) => {
-        if (!mandataris.rangorde) {
-          mandataris.set('rangorde', rangorde++);
-        }
-        else {
-          //it might be a string
-          rangorde = Number(mandataris.rangorde);
-          mandataris.set('rangorde', rangorde);
-        }
-      });
-      this.set('verkozenen', this.mandatarissen.sortBy('rangorde'));
-    }
+    // next runloop because this triggers a reorder in the top level component
+    // causing mandatarissen to change twice in the same runloop
+    next(this, this.renumberMandatarissen);
   },
-  renumberVerkozenen() {
+  renumberMandatarissen() {
     var orde = 1;
-    for(var verkozene of this.verkozenen) {
+    for(var verkozene of this.mandatarissen) {
       verkozene.set('rangorde', orde++);
     }
   },
   actions: {
     up(verkozene) {
-      const index = this.verkozenen.indexOf(verkozene);
+      const index = this.mandatarissen.indexOf(verkozene);
       if (index > 0) {
-        this.verkozenen.removeObject(verkozene);
-        this.verkozenen.insertAt(index -1, verkozene);
-        this.renumberVerkozenen();
+        this.mandatarissen.removeObject(verkozene);
+        this.mandatarissen.insertAt(index -1, verkozene);
+        this.renumberMandatarissen();
       }
     },
     down(verkozene) {
-      const index = this.verkozenen.indexOf(verkozene);
-      if (index < this.verkozenen.length) {
-        this.verkozenen.removeObject(verkozene);
-        this.verkozenen.insertAt(index + 1, verkozene);
-        this.renumberVerkozenen();
+      const index = this.mandatarissen.indexOf(verkozene);
+      if (index < this.mandatarissen.length) {
+        this.mandatarissen.removeObject(verkozene);
+        this.mandatarissen.insertAt(index + 1, verkozene);
+        this.renumberMandatarissen();
       }
-    },
-    remove(verkozene) {
-      this.verkozenen.removeObject(verkozene);
-      this.renumberVerkozenen();
     },
     setRecord(verkozene) {
       this.setRecord(verkozene);

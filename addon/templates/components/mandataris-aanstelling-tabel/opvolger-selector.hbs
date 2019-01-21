@@ -9,5 +9,9 @@
    selected=opvolger
    onchange=(action "select")
    as |persoon|}}
-  {{persoon.gebruikteVoornaam}} {{persoon.achternaam}}, {{persoon.isKandidaatVoor.firstObject.lijstnaam}} ({{persoon.verkiezingsresultaten.firstObject.plaatsRangorde}})
+  {{#if persoon.isVerkozen}}
+    (verkozene) {{persoon.gebruikteVoornaam}} {{persoon.achternaam}}, {{persoon.isKandidaatVoor.firstObject.lijstnaam}} ({{persoon.verkiezingsresultaten.firstObject.plaatsRangorde}})
+  {{else}}
+    (opvolger) {{persoon.gebruikteVoornaam}} {{persoon.achternaam}}, {{persoon.isKandidaatVoor.firstObject.lijstnaam}} ({{persoon.verkiezingsresultaten.firstObject.plaatsRangorde}})
+  {{/if}}
 {{/power-select}}

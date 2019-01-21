@@ -26,8 +26,15 @@ export default Component.extend({
         size: 100
       }
     };
-    let personen = yield this.store.query('persoon', queryParams);
-    return personen;
+    let personenOpvolgers = (yield this.store.query('persoon', queryParams)).toArray();
+
+    //I hacked the verkozenen in it because some times we need them back again
+    queryParams['filter']['verkiezingsresultaten']['gevolg'][':uri:'] = 'http://data.vlaanderen.be/id/concept/VerkiezingsresultaatGevolgCode/89498d89-6c68-4273-9609-b9c097727a0f';
+
+    let personenVerkozenen = (yield this.store.query('persoon', queryParams)).toArray();
+    personenVerkozenen.map(p => p.set('isVerkozen', true));
+
+    return [...personenVerkozenen, ...personenOpvolgers];
   }),
 
   actions: {

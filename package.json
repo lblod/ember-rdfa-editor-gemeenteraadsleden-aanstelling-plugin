@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor-gemeenteraadsleden-aanstelling-plugin",
-  "version": "0.7.4",
+  "version": "0.7.8",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
@@ -26,7 +26,8 @@
     "ember-cli-htmlbars-inline-precompile": "^1.0.3",
     "uuid": "^3.3.2",
     "ember-auto-import": "^1.2.13",
-    "ember-concurrency": "^0.8.22"
+    "ember-concurrency": "^0.8.22",
+    "ember-moment": "^7.6.0"
   },
   "devDependencies": {
     "@lblod/ember-vo-webuniversum": "^0.17.0",

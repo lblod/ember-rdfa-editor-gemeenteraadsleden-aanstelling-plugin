@@ -3,7 +3,7 @@ import layout from '../../templates/components/mandataris-aanstelling-tabel/mand
 import { defaultStatus, afstandMandaat, waarnemend, verhinderd, afwezigZonderKennisname, afwezigMetKennisname, onverenigbaarheid, burgemeester } from '../../models/aan-te-stellen-mandataris';
 export default Component.extend({
   layout,
-  options: [
+  options: Object.freeze([
     defaultStatus,
     waarnemend,
     verhinderd,
@@ -12,7 +12,7 @@ export default Component.extend({
     afwezigZonderKennisname,
     onverenigbaarheid,
     burgemeester
-  ],
+  ]),
   actions: {
     select(status) {
       this.verkozene.set('status', status);

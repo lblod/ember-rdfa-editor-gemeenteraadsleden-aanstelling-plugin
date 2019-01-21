@@ -54,8 +54,9 @@ export default Component.extend({
   bestuursorgaan: reads('aanstelling.bestuursorgaan'),
   startDate: reads('aanstelling.startDate'),
   bestuursfunctie: reads('info.bestuursfunctie'),
-
-  sortedMandatarissen: sort('mandatarissen', (a,b) =>  a.persoon.get('achternaam').trim().localeCompare(b.persoon.get('achternaam').trim())),
+  sortedMandatarissen: computed('mandatarissen', 'mandatarissen.@each.status', function(){
+    return this.mandatarissen.sort((a,b) =>  a.persoon.get('achternaam').trim().localeCompare(b.persoon.get('achternaam').trim()));
+  }),
 
   mandatarissenVoorGeloofsbrieven: filter('sortedMandatarissen', function(mandataris) {
     return [defaultStatus, verhinderd].includes(mandataris.status);
@@ -63,9 +64,11 @@ export default Component.extend({
   aangesteldeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
     return [verhinderd, waarnemend, defaultStatus].includes(mandataris.status);
   }),
-  zetelendeMandatarissen: filter('mandatarissen', function(mandataris) {
+  _zetelendeMandatarissen: filter('sortedMandatarissen', function(mandataris) {
     return [waarnemend, defaultStatus, burgemeester].includes(mandataris.status);
   }),
+  rangordeSort: Object.freeze(['rangorde']),
+  zetelendeMandatarissen: sort('_zetelendeMandatarissen','rangordeSort'),
   waarnemendeMandatarissen: filterBy('sortedMandatarissen', 'status', waarnemend),
   verhinderdeMandatarissen: filterBy('sortedMandatarissen', 'status', verhinderd),
   afstandenVanMandaat: filterBy('sortedMandatarissen', 'status', afstandMandaat),
@@ -79,7 +82,7 @@ export default Component.extend({
     this.set('currentStep', null);
     this.set('record', null);
   },
-  fetchResources: task( function * () {
+  fetchResources: task( function * (flushTable = false) {
     if (this.bestuursorgaan && this.bestuursfunctie) {
       const mandaten = yield this.store.query('mandaat', {
         filter: {
@@ -89,7 +92,7 @@ export default Component.extend({
       });
       this.set('mandaat', mandaten.get('firstObject'));
     }
-    if (this.info.node) {
+    if (this.info.node && !flushTable) {
       this.set('mandatarissen', yield this.info.data);
     }
     else {
@@ -121,6 +124,11 @@ export default Component.extend({
     }
   }),
   actions: {
+    flushTable(){
+      this.fetchResources.perform(true);
+      this.set('currentStep', null);
+      this.set('record', null);
+    },
     insert(){
       const html = document.getElementById(this.outputId).innerHTML;
       if (this.info.node) {

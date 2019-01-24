@@ -24,20 +24,22 @@
     {{#if adding}}
     <tr>
       <td>
-        {{mandataris-aanstelling-tabel/opvolger-selector bestuursorgaan=bestuursorgaan opvolger=opvolger onSelect=(action "selectOpvolger")}}
-        <p class="u-spacer--top--tiny">U kan hier zoeken naar een opvolger of persoon die ook in de tabel moet verschijnen.</p>
-          </td>
-          <td>{{moment-format newOpvolger.geboorte.datum 'DD/MM/YYYY'}}</td>
-          <td>
-            {{#wu-button-group}}
-              {{#wu-link-button class="button--small" isNarrow=true onClick=(action "addOpvolger")}}
-                <i class="vi vi-check vi-u-xs"></i>Voeg persoon of opvolger toe
-              {{/wu-link-button}}
-              {{#wu-link-button class="button--small button--alt" isNarrow=true onClick=(action "cancelAdd")}}
-                <i class="vi vi-cross vi-u-s"></i>Annuleer
-              {{/wu-link-button}}
-            {{/wu-button-group}}
-          </td>
+      	<div style="max-width:300px;">
+	        {{mandataris-aanstelling-tabel/opvolger-selector bestuursorgaan=bestuursorgaan opvolger=opvolger onSelect=(action "selectOpvolger")}}
+	        <p class="u-spacer--top--tiny">U kan hier zoeken naar een opvolger of persoon die ook in de tabel moet verschijnen.</p>
+	      </div>
+      </td>
+      <td colspan="2">{{moment-format newOpvolger.geboorte.datum 'DD/MM/YYYY'}}</td>
+      <td>
+        {{#wu-button-group}}
+          {{#wu-link-button class="button--small" isNarrow=true onClick=(action "addOpvolger")}}
+            <i class="vi vi-check vi-u-xs"></i>Voeg persoon of opvolger toe
+          {{/wu-link-button}}
+          {{#wu-link-button class="button--small button--alt" isNarrow=true onClick=(action "cancelAdd")}}
+            <i class="vi vi-cross vi-u-s"></i>Annuleer
+          {{/wu-link-button}}
+        {{/wu-button-group}}
+      </td>
     </tr>
     {{/if}}
     {{#each verkozenen as |verkozene|}}

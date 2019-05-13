@@ -106,7 +106,7 @@
                   {{/rdfa/ctx-linked-resource}}
                 </td>
                 <td>
-                  <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
+                  <span property="mandaat:start" datatype="xsd:dateTime" content={{verkozene.start}}>
                     {{moment-format verkozene.start 'LL'}}
                   </span>
                   {{#if verkozene.isVerhinderd}}
@@ -312,7 +312,7 @@
                   {{/rdfa/ctx-linked-resource}}
                 </td>
                 <td>
-                  <span property="mandaat:start" datatype="xsd:date" content={{moment-format verkozene.start 'YYYY-MM-DD'}}>
+                  <span property="mandaat:start" datatype="xsd:dateTime" content={{verkozene.start}}>
                     {{moment-format verkozene.start 'LL'}}
                   </span>
                   {{#if verkozene.isVerhinderd}}
